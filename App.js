@@ -1,21 +1,22 @@
 import React from 'react';
+import {StyleSheet} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
 import Home from './screens/home';
 import Booking from './screens/booking';
 import Profile from './screens/profile';
 import Contact from './screens/contact';
 import Login from './screens/login';
-import Calender from './screens/calender'
-import {StyleSheet} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import Schedule from './screens/schedule'
 import Review from './screens/review';
 
 export default function App() {
- 
+
   const Stack = createStackNavigator();
   return (
    <NavigationContainer>
-     <Stack.Navigator initialRouteName="Home">
+     <Stack.Navigator initialRouteName="Login">
        <Stack.Screen
         name="Home"
         component={Home}
@@ -41,8 +42,8 @@ export default function App() {
         component={Login}
        />
        <Stack.Screen
-        name="Calendar"
-        component={Calander}
+        name="Schedule"
+        component={Schedule}
        />
      </Stack.Navigator>
    </NavigationContainer>
