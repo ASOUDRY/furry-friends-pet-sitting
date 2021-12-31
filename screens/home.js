@@ -12,8 +12,8 @@ export default class Home extends React.Component {
         return (
             <ScrollView>
                 <View style={styles.services}>
-                    <Button title="Solid Button" onPress={() => this.props.navigation.navigate('Booking')} />
-                    <Button title="Profile"  onPress={() => this.props.navigation.navigate('Profile')}></Button>
+                    {/* <Button title="Solid Button" onPress={() => this.props.navigation.navigate('Booking')} />
+                    <Button title="Profile"  onPress={() => this.props.navigation.navigate('Profile')}></Button> */}
                     <Button title="Login"  onPress={() => this.props.navigation.navigate('Login')}></Button>
                 </View>
               
