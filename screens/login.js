@@ -2,8 +2,9 @@ import { useNavigation } from '@react-navigation/core'
 import React, { useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from '@firebase/auth'
-import { auth } from '../firebase.js'
+import { auth } from '../components/firebase.js'
 import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Login = () => {
   // const [email, setEmail] = useState('')
@@ -70,7 +71,7 @@ const Login = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => {console.log(user.email)}}
+          onPress={() => {console.log(user.id)}}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Testing User</Text>
@@ -79,10 +80,13 @@ const Login = () => {
 
 
         <TouchableOpacity
-          onPress={() => {navigation.navigate("Profile")}}
+          onPress={() => {navigation.navigate("Schedule",
+          {
+            id: user.uid
+          })}}
           style={styles.button}
         >
-          <Text style={styles.buttonText}>Moving Profile</Text>
+          <Text style={styles.buttonText}>Moving Schedule</Text>
         </TouchableOpacity>
 
 
