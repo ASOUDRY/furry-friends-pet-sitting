@@ -18,7 +18,7 @@ export default function App() {
   const Stack = createDrawerNavigator();
   return (
    <NavigationContainer>
-     <Stack.Navigator initialRouteName="Home">
+     <Stack.Navigator initialRouteName="Contact">
        <Stack.Screen
         name="Home"
         component={Home}
