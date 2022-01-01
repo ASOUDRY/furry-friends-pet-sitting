@@ -1,10 +1,12 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+
+import 'react-native-gesture-handler';
 
 import Home from './screens/home';
-import Booking from './screens/booking';
+
 import Profile from './screens/profile';
 import Contact from './screens/contact';
 import Login from './screens/login';
@@ -13,17 +15,13 @@ import Review from './screens/review';
 
 export default function App() {
 
-  const Stack = createStackNavigator();
+  const Stack = createDrawerNavigator();
   return (
    <NavigationContainer>
-     <Stack.Navigator initialRouteName="Login">
+     <Stack.Navigator initialRouteName="Contact">
        <Stack.Screen
         name="Home"
         component={Home}
-       />
-       <Stack.Screen
-        name="Booking"
-        component={Booking}
        />
        <Stack.Screen
        name="Review"
