@@ -1,29 +1,28 @@
 import React, {useRef} from 'react';
 import {View, StyleSheet, Text, TextInput, Button} from "react-native";
 import { Formik } from 'formik';
+import { firestore } from '../components/firebase';
+import {addDoc, collection} from 'firebase/firestore'
 
 const Contact = () => {
 
-const sendEmail = (subject, name, email, message, e) => {
-   console.log(subject)
-
-    e.preventDefault();
-
-    emailjs.sendForm('gmail', 'template_dgmnbm5', form.current, 'user_GAuav2ceeSb7x5sFSsW54')
-      .then((result) => {
-          console.log(result.text);
-      }, (error) => {
-          console.log(error.text);
+const sendEmail = (values) => {
+   console.log(values)
+   const docRef = addDoc(collection(firestore, "contact"), {
+    Email: values.email,
+    Subject: values.subject,
+    Name: values.name,
+    Message: values.message
       });
-}
-
+    
+	}
         return (
             <View style={styles.form}>
                 <Formik
                
      initialValues={{ subject: '', name: '', email: '', message: '' }}
-     onSubmit={(values) => sendEmail(values.subject, values.name, values.email, values.message)
-        //  values => console.log(values.subject)
+     onSubmit={ 
+            (values) => sendEmail(values)
         }
    >
      {
