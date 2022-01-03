@@ -7,12 +7,15 @@ import {addDoc, collection} from 'firebase/firestore'
 const Contact = () => {
 
 const sendEmail = (values) => {
-   console.log(values)
+   console.log(Date.now())
    const docRef = addDoc(collection(firestore, "contact"), {
-    Email: values.email,
-    Subject: values.subject,
-    Name: values.name,
-    Message: values.message
+     data: {
+      Email: values.email,
+      Subject: values.subject,
+      Name: values.name,
+      Message: values.message,
+     },
+     Time : Date.now()
       });
     
 	}
