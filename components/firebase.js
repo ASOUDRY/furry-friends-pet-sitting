@@ -3,9 +3,9 @@ import { getFirestore } from "firebase/firestore";
 import {getAuth} from 'firebase/auth'
 
 const firebaseApp = initializeApp({
-  apiKey: "AIzaSyCtTlZdbY1m8Hn0vNzDHXIKJ58pXVX4AfE",
-  authDomain: "dog-sitting-3062d.firebaseapp.com",
-  projectId: "dog-sitting-3062d",
+  apiKey: "API-KEY",
+  authDomain: "dog-sitting-2.firebaseapp.com",
+  projectId: "dog-sitting-2",
 });
 
 export const firestore = getFirestore(firebaseApp)
