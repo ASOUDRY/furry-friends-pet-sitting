@@ -25,7 +25,10 @@ const sendEmail = (values) => {
                
      initialValues={{ subject: '', name: '', email: '', message: '' }}
      onSubmit={ 
-            (values) => sendEmail(values)
+            (values, actions) =>  {
+              actions.resetForm();
+              sendEmail(values);
+            }
         }
    >
      {
