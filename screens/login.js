@@ -1,14 +1,20 @@
 import { useNavigation } from '@react-navigation/core'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from '@firebase/auth'
 import { auth } from '../components/firebase.js'
-import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { firestore } from '../components/firebase';
+import {getDocs, collection} from 'firebase/firestore'
 
 const Login = () => {
-  // const [email, setEmail] = useState('')
-  // const [password, setPassword] = useState('')
+
+  useEffect(() => {
+    initReview()
+}, [])
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [firstReview, setfirstReview] = useState('')
 
   const navigation = useNavigation()
   const [registerEmail, setRegisterEmail] = useState('')
@@ -18,6 +24,23 @@ const Login = () => {
   onAuthStateChanged(auth, (currentUser) => {
     setUser(currentUser)
   })
+
+  const initReview = async () => {
+    try {
+     const querySnapshot = await getDocs(collection(firestore, "card"));
+   
+     querySnapshot.forEach((doc) => {
+      //  console.log(doc.data().data)
+         const {Title, Message} = doc.data().data
+        //  console.log(Title)
+         setfirstReview((firstReview) => [...firstReview, {
+             Message: Message,
+             Title: Title
+         }])
+     });
+    } catch (error) {
+     console.error(error);      
+ }}
 
   const register = async () => {
     try {
@@ -31,7 +54,9 @@ const Login = () => {
   const login = async () => {
     try {
       const user = await signInWithEmailAndPassword(auth, registerEmail, registerPassword)
-      console.log(user)
+      // console.log(user)
+      // console.log(firstReview)
+      navigation.navigate('Stack', {screen: 'Home', params: {inReview: firstReview}})
     } catch (error) {
       console.log(error.message)
     } 
@@ -77,8 +102,6 @@ const Login = () => {
           <Text style={styles.buttonText}>Testing User</Text>
         </TouchableOpacity>
 
-
-
         <TouchableOpacity
           onPress={() => {navigation.navigate("Schedule",
           {
@@ -89,15 +112,12 @@ const Login = () => {
           <Text style={styles.buttonText}>Moving Schedule</Text>
         </TouchableOpacity>
 
-
         <TouchableOpacity
           onPress={signout}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Logout</Text>
         </TouchableOpacity>
-
-
 
         <TouchableOpacity
           onPress={register}
