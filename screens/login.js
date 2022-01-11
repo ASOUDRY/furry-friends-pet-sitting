@@ -30,9 +30,7 @@ const Login = () => {
      const querySnapshot = await getDocs(collection(firestore, "card"));
    
      querySnapshot.forEach((doc) => {
-      //  console.log(doc.data().data)
          const {Title, Message} = doc.data().data
-        //  console.log(Title)
          setfirstReview((firstReview) => [...firstReview, {
              Message: Message,
              Title: Title
@@ -42,20 +40,9 @@ const Login = () => {
      console.error(error);      
  }}
 
-  const register = async () => {
-    try {
-      const user = await createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
-      console.log(user)
-    } catch (error) {
-      console.log(error.message)
-    }   
-  }
-
   const login = async () => {
     try {
       const user = await signInWithEmailAndPassword(auth, registerEmail, registerPassword)
-      // console.log(user)
-      // console.log(firstReview)
       navigation.navigate('Stack', {screen: 'Home', params: {inReview: firstReview}})
     } catch (error) {
       console.log(error.message)
@@ -74,13 +61,11 @@ const Login = () => {
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
-          // value={email}
           onChangeText={text => setRegisterEmail(text)}
           style={styles.input}
         />
         <TextInput
           placeholder="Password"
-          // value={password}
           onChangeText={text => setRegisterPassword(text)}
           style={styles.input}
           secureTextEntry
@@ -96,34 +81,12 @@ const Login = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => {console.log(user.id)}}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Testing User</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {navigation.navigate("Schedule",
-          {
-            id: user.uid
-          })}}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Moving Schedule</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={signout}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Logout</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={register}
+          onPress={() => {
+            navigation.navigate('Registration')
+          }}
           style={[styles.button, styles.buttonOutline]}
         >
-          <Text style={styles.buttonOutlineText}>Register</Text>
+          <Text style={styles.buttonOutlineText}>Don't have a account yet?</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
