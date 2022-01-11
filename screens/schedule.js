@@ -19,7 +19,7 @@ export default class Schedule extends React.Component {
 
     componentDidMount() {
         this.setState({
-            id: this.props.route.params.id
+            id: "1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed"
         })
     }
 
@@ -52,11 +52,51 @@ export default class Schedule extends React.Component {
         }
 
         return (
+            // map over this somehow
             <View style={styles.services}>
                 <Text style={styles.title}>Where do you live?</Text>
                 <GooglePlacesInput click={click} style={styles.input} />
 
                 <Text>What kind of Pets do you have?</Text>
+                <Button title="Dog"/>
+                <Button
+                 icon={{
+                    name: 'arrow-up',
+                    type: 'font-awesome',
+                    size: 15,
+                    color: 'white',
+                  }}
+                  iconRight
+                />
+                 <Button
+                 icon={{
+                    name: 'arrow-down',
+                    type: 'font-awesome',
+                    size: 15,
+                    color: 'white',
+                  }}
+                  iconRight
+                />
+                <Button title="Cat"/>
+                <Button
+                 icon={{
+                    name: 'arrow-up',
+                    type: 'font-awesome',
+                    size: 15,
+                    color: 'white',
+                  }}
+                  iconRight
+                />
+                 <Button
+                 icon={{
+                    name: 'arrow-down',
+                    type: 'font-awesome',
+                    size: 15,
+                    color: 'white',
+                  }}
+                  iconRight
+                />
+                 <Button title="Add new pet"/>
                 <Text>What services do you need?</Text>
 
                 <Text style={styles.title}>Where dates will you need?</Text>
