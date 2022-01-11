@@ -17,12 +17,12 @@ const Stack = () => {
                 name="Home"
                 component={Home}
                 // initialParams={id: "test"}
-                // options={{ headerShown: false }}
+                options={{ headerShown: false }}
             />
              <Stack.Screen
         name="Contact"
         component={Contact}
-        // options={{ headerShown: false }}
+        options={{ headerShown: false }}
        />
          <Stack.Screen
         name="Reviews"
