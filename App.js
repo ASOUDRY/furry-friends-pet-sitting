@@ -7,11 +7,11 @@ import Profile from './screens/profile';
 import Registration from './screens/register';
 import Login from './screens/login';
 import Schedule from './screens/schedule'
-import Stack from './stack';
+import Stack from './screens/stack';
 
 
 export default function App() {
-  LogBox.ignoreAllLogs()
+  // LogBox.ignoreAllLogs()
   const Drawer = createDrawerNavigator();
   return (
     <NavigationContainer>
