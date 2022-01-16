@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform} from 'react-native'
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from '@firebase/auth'
 import { auth } from '../components/firebase.js'
 import { firestore } from '../components/firebase';
@@ -55,6 +55,7 @@ const Login = () => {
 
   return (
     <KeyboardAvoidingView
+    behavior="height"
       style={styles.container}
       behavior="padding"
     >
