@@ -7,6 +7,7 @@ import { firestore } from '../components/firebase';
 import {addDoc, collection} from 'firebase/firestore'
 import { Formik } from 'formik';
 import { AnimalButton } from '../components/animalButton.js';
+import { ServiceButton } from '../components/serviceButton.js';
 
 
 
@@ -15,7 +16,9 @@ const Schedule = () => {
     const [startdate, setStartDate] = useState(false);
     const [enddate, setEndDate] = useState(false);
     const [id, setID] = useState([]);
-    const [animalList, setList] = useState(['cat', 'dog'])
+    const [animalList, setList] = useState(['cat', 'dog', "frog", 'horsey', "piggy"])
+
+    const serviceList = ["Walking", "Drop-in-Visits", "House-Sitting", "One-Time", "Re-Occuring"]
    
         let click = (value) => {
               setLocation(value)       
@@ -61,8 +64,6 @@ const Schedule = () => {
                  initialValues={{pet: ''}}
                  onSubmit={(values, actions) => {
                     actions.resetForm();
-                   animalList.push(values.pet)
-                   let newList = animalList
                    setList([...animalList,values.pet])
                  }}
                  >
@@ -82,14 +83,21 @@ const Schedule = () => {
                      }
                  </Formik>
                 <Text>What services do you need?</Text>
-
+                <View
+                style={styles.servicebutton}
+                >
+                {
+                    serviceList.map((title) => {
+                        return (
+                            <ServiceButton title={title} />
+                        )
+                    })
+                }
+                </View>
+               
                 <Text style={styles.title}>Where dates will you need?</Text>
                 <Calender dates={dates}/>
                 <Button title="Submit" onPress={() => submit() } /> 
-                <Button title="Profile"  onPress={() => this.props.navigation.navigate('Profile')}></Button>
-                <Button title="Go Home"
-                onPress={() => this.props.navigation.navigate('Home')}
-                ></Button>           
             </View>   
         )
     }
@@ -119,29 +127,18 @@ const styles = StyleSheet.create({
     },
     buttonGroup: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
     },
     new: {
         color: 'red',
         width: "50%"
     },
-    // animalButton: {
-    //     // color: "red",
-    //     // backgroundColor: "black",
-    //     // height: 50,
-    //     width: "200%",
-    //     margin: 10,
-    //     padding: 10,
-    //     borderStyle: 'solid',
-    //     borderColor: 'black'
-    // },
     buttonGrouptrue: {
-    //    width: "100%",
         flexDirection: 'row',
+        flexWrap: 'wrap',
     },
     directionalButtons: {
         flexDirection: 'column',
-        // margin: 10,
-        // padding: 10
     },
     input: {
         height: 50,
@@ -157,4 +154,8 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         color: "red"
     },
+    servicebutton: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    }
 })
