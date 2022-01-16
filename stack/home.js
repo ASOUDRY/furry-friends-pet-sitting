@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import {View, ScrollView, StyleSheet, Modal, Pressable, TouchableOpacity} from "react-native";
-import { Button, Text, Card, Image } from 'react-native-elements';
+import {View, ScrollView, StyleSheet, Modal, Pressable, TouchableOpacity, Image} from "react-native";
+import { Button, Text, Card } from 'react-native-elements';
 import { Reviewform} from '../components/reviewform';
 import { firestore } from '../components/firebase';
-import {addDoc, doc, getDocs, collection} from 'firebase/firestore'
-
-
+import {getDocs, collection} from 'firebase/firestore'
 
 const Home = ({route, navigation}) => { 
-  let data = route.params.inReview
+
+  const [toggle, setToggle] = useState(false);
 
   const fetchdata = async () => {
     try {
+      if (ReviewList.length != 0) {
+        setReviewList([])
+      }
      const querySnapshot = await getDocs(collection(firestore, "card"));
      querySnapshot.forEach((doc) => {
          const {Title, Message} = doc.data().data
@@ -25,16 +27,27 @@ const Home = ({route, navigation}) => {
  } 
 }
 
+const refreshState = () => {
+  setToggle(!toggle)
+ 
+}
 
-  useEffect(() => {
-       fetchdata()
-}, [])
+useEffect(() => {
+  fetchdata()
+  console.log(toggle);
+}, [toggle]);
 
 const [ReviewList, setReviewList] = useState([])
+    
     const [modalOne, setModalOneVisible] = useState(false);
     const [modalTwo, setModalTwoVisible] = useState(false);
     const [walkingTab, setWalkingTab] = useState('');
-      return (
+      
+  if (ReviewList.length <= 1) {
+    return null;
+  }
+  else {
+    return (
       <ScrollView>
         <Modal
          animationType="fade"
@@ -48,9 +61,9 @@ const [ReviewList, setReviewList] = useState([])
                 style={styles.centeredView}
                 >
                   <View style={styles.modalView}>
-                    <Text h3 style={styles.modalText}>{data[0].Title}</Text>
+                    <Text h3 style={styles.modalText}>{ReviewList[0].Title}</Text>
                     <Text>
-                    {data[0].Message}
+                    {ReviewList[0].Message}
                     </Text>
                     <Button title={"Hide Modal"}
                      onPress={() => setModalOneVisible(!modalOne)}
@@ -69,9 +82,9 @@ const [ReviewList, setReviewList] = useState([])
                   >
                 <View style={styles.centeredView}>
                   <View style={styles.modalView}>
-                  <Text h3 style={styles.modalText}>{data[1].Title}</Text>
+                  <Text h3 style={styles.modalText}>{ReviewList[1].Title}</Text>
                     <Text>
-                    {data[1].Message}
+                    {ReviewList[1].Message}
                     </Text>
                     <Button title={"Hide Modal"}
                      onPress={() => setModalTwoVisible(!setModalTwoVisible)}
@@ -105,7 +118,7 @@ const [ReviewList, setReviewList] = useState([])
         <Text h2 style={styles.title} >Meet Your Caregiver</Text>
 
         <View style={styles.services}>
-            <Image source={{ uri: `../profile2.jpg` }} style={{ width: 200, height: 200, margin: 10  }} />
+            <Image source={require('./image.png')} style={{ width: 200, height: 200, margin: 10  }} />
                 <View style={styles.care}>
                   <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
                         sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
@@ -117,31 +130,34 @@ const [ReviewList, setReviewList] = useState([])
                
         <Text h2 style={styles.title} >Customer Reviews</Text>
         <View style={styles.services}>
+         
                 <TouchableOpacity
                 onPress={() => {setModalOneVisible(true)}}
                 >
                   <Card>
-                    <Card.Title>{data[0].Title}</Card.Title>
+                    <Card.Title>{ReviewList[0].Title}</Card.Title>
                     <Card.Divider/>
                   </Card>
                 </TouchableOpacity>
                 <TouchableOpacity
                  onPress={() => {setModalTwoVisible(true)}}
                 > 
-                    <Card>
-                        <Card.Title>{data[1].Title}</Card.Title>
-                        <Card.Divider/>
-                    </Card>
+                   <Card>
+                    <Card.Title>{ReviewList[1].Title}</Card.Title>
+                    <Card.Divider/>
+                  </Card>
                 </TouchableOpacity>
         </View>
         <View style={styles.services}>
-          <Reviewform/>
-            {/* <Button  title="Write a review" /> */}
-            <Button  title="More reviews" onPress={() => navigation.navigate('Reviews', {fetch: ReviewList})}
+          <Reviewform refreshState={refreshState}/>
+            <Button  title="More reviews" onPress={() => navigation.navigate('Reviews', {fetch: ReviewList})} 
         />
+    
+      
         </View>
       </ScrollView>
   )
+  }      
 }
 
 const styles = StyleSheet.create({
@@ -168,7 +184,6 @@ const styles = StyleSheet.create({
     },
     learn: {
         color: `red`,
-        // backgroundColor: 'black',
         height: 50,
         fontSize: 2
     },
