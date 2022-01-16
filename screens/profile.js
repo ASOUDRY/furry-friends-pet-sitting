@@ -33,22 +33,8 @@ export default class Profile extends React.Component {
                   <Card.Title>Past Visit</Card.Title>
                   <Card.Divider/>
                   </Card>
-            </View>
-
-
-               
+            </View>               
                   <Button  title="More Info"/>
-
-
-                <Button 
-                title="Solid Button"
-                onPress={() => this.props.navigation.navigate('Booking')}
-                />
-
-                <Button 
-                title="Go Home"
-                onPress={() => this.props.navigation.navigate('Home')}
-                />
             </View>
         )
     }
