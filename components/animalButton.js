@@ -5,11 +5,11 @@ import { View, StyleSheet } from 'react-native';
 const AnimalButton = props => {
     const [animalNumber, setanimalNumber] = useState(1)
 
-
-
     return (
         <View style={styles.buttonGrouptrue} >
-                                    <Button title={animalNumber + ' ' + props.animalz} />
+                                    <Button title={animalNumber + ' ' + props.animalz} 
+                                    containerStyle={styles.button}
+                                    />
                                             <View style={styles.directionalButtons}>
                           <Button icon={{
                               name: 'arrow-up',
@@ -42,8 +42,12 @@ const styles = StyleSheet.create({
     buttonGrouptrue: {
             flexDirection: 'row',
         },
-        directionalButtons: {
-            flexDirection: 'column',
+        button: {
+            backgroundColor: 'black',
+        color: 'black',
+            borderWidth: 2,
+            borderColor: 'white',
+            borderRadius: 30,
         }
 })
 
