@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from "react-native";
+import {ScrollView, StyleSheet} from "react-native";
 import {Text, Card} from 'react-native-elements';
 
 
@@ -7,8 +7,9 @@ import {Text, Card} from 'react-native-elements';
 const ReviewPage = (props) => {
 
 const reviewData = props.route.params.fetch
+
         return (   
-            <View>
+            <ScrollView>
                 {
                 reviewData.map((review) => {
                     return (
@@ -20,7 +21,7 @@ const reviewData = props.route.params.fetch
                     )
                 })
                 }
-            </View>
+            </ScrollView>
         )
     }
     

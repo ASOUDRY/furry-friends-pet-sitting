@@ -1,20 +1,10 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform} from 'react-native'
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from '@firebase/auth'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { createUserWithEmailAndPassword, onAuthStateChanged, } from '@firebase/auth'
 import { auth } from '../components/firebase.js'
-import { firestore } from '../components/firebase';
-import {getDocs, collection} from 'firebase/firestore'
 
-const Login = () => {
-
-  useEffect(() => {
-    initReview()
-}, [])
-
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [firstReview, setfirstReview] = useState('')
+const Registration = () => {
 
   const navigation = useNavigation()
   const [registerEmail, setRegisterEmail] = useState('')
@@ -25,37 +15,18 @@ const Login = () => {
     setUser(currentUser)
   })
 
-  const initReview = async () => {
+  const register = async () => {
     try {
-     const querySnapshot = await getDocs(collection(firestore, "card"));
-   
-     querySnapshot.forEach((doc) => {
-         const {Title, Message} = doc.data().data
-         setfirstReview((firstReview) => [...firstReview, {
-             Message: Message,
-             Title: Title
-         }])
-     });
-    } catch (error) {
-     console.error(error);      
- }}
-
-  const login = async () => {
-    try {
-      const user = await signInWithEmailAndPassword(auth, registerEmail, registerPassword)
-      navigation.navigate('Stack', {screen: 'Home', params: {inReview: firstReview}})
+      const user = await createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
+      console.log(user)
+      navigation.navigate('Login')
     } catch (error) {
       console.log(error.message)
-    } 
-  }
-  const signout = async () => {
-    await signOut(auth)
-    console.log(user)
+    }   
   }
 
   return (
     <KeyboardAvoidingView
-    behavior="height"
       style={styles.container}
       behavior="padding"
     >
@@ -75,26 +46,17 @@ const Login = () => {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          onPress={login}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Registration')
-          }}
+          onPress={register}
           style={[styles.button, styles.buttonOutline]}
         >
-          <Text style={styles.buttonOutlineText}>Don't have a account yet?</Text>
+          <Text style={styles.buttonOutlineText}>Register</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   )
 }
 
-export default Login
+export default Registration
 
 const styles = StyleSheet.create({
   container: {

@@ -2,7 +2,6 @@ import React from 'react';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 const GooglePlacesInput = props => {
-console.log(props)
 const datatest = async (locationData) => {
     props.click(locationData)
   } 

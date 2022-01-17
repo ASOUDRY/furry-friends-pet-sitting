@@ -1,11 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Text, TextInput, Button, Modal} from "react-native";
 import { Formik } from 'formik';
 import { firestore } from './firebase';
 import {addDoc, collection} from 'firebase/firestore'
 
-const Reviewform = () => {
+const Reviewform = ({refreshState}) => {
     const [modalOne, setModalOneVisible] = useState(false);
+   
+
+ 
+
 
 const sendReview = (values) => {
    const docRef = addDoc(collection(firestore, "card"), {
@@ -37,8 +41,10 @@ const sendReview = (values) => {
                onSubmit={ 
                       (values, actions) =>  {
                         setModalOneVisible(!modalOne)
-                          console.log("clicked")
+                          // console.log("clicked")
                         actions.resetForm();
+                        // setName(values.title)
+                        refreshState()
                         sendReview(values);
                       }
                   }
