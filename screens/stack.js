@@ -14,15 +14,17 @@ const Stack = () => {
             <Stack.Screen
                 name="Home"
                 component={Home}
+                options={{headerShown: false}}
             />
              <Stack.Screen
         name="Contact"
-        component={Contact}    
+        component={Contact}
+        options={{headerShown: false}}
        />
          <Stack.Screen
         name="Reviews"
         component={ReviewPage}
-          options={{ title: 'More Reviews', }}
+        options={{headerShown: false}}
        />
             </Stack.Navigator>
        
