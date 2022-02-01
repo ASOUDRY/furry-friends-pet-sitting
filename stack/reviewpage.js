@@ -1,17 +1,20 @@
 import React from 'react';
 import {ScrollView, StyleSheet} from "react-native";
-import {Text, Card} from 'react-native-elements';
+import {Text, Card, Button} from 'react-native-elements';
 
 
 
-const ReviewPage = (props) => {
+const ReviewPage = ({navigation, route}) => {
 
-const reviewData = props.route.params.fetch
+const saveData = route.params.fetch
 
         return (   
             <ScrollView>
+                 <Button 
+          onPress={() => navigation.navigate('Home')}
+          title="Back" />
                 {
-                reviewData.map((review) => {
+                saveData.map((review) => {
                     return (
                         <Card>
                             <Card.Title>{review.Title}</Card.Title>

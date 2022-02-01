@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import { firestore } from '../components/firebase';
 import {addDoc, collection} from 'firebase/firestore'
 
-const Contact = () => {
+const Contact = ({navigation}) => {
 
 const sendEmail = (values) => {
    console.log(Date.now())
@@ -57,8 +57,15 @@ const sendEmail = (values) => {
          placeholder='Message'
         onChangeText={props.handleChange('message')}
         value={props.values.message}
-                            />
-         <Button style={styles.button} onPress={props.handleSubmit} title="Submit" />
+                      />
+          <View
+          style={styles.button}
+          >
+          <Button 
+          onPress={() => navigation.navigate('Home')}
+          title="Back" />
+         <Button onPress={props.handleSubmit} title="Submit" /> 
+          </View>  
        </View>
      )}
    </Formik>
@@ -78,9 +85,7 @@ const styles = StyleSheet.create({
         borderRadius: 6,
     },
     button: {
-        borderWidth: 1,
-        borderColor: 'black',
-        color: "red"
+      flexDirection: 'row',
     }
 })
 
