@@ -9,14 +9,20 @@ import { Formik } from 'formik';
 import { AnimalButton } from '../components/animalButton.js';
 import { ServiceButton } from '../components/serviceButton.js';
 
-
-
 const Schedule = () => {
     const [location, setLocation] = useState(false);
     const [startdate, setStartDate] = useState(false);
     const [enddate, setEndDate] = useState(false);
     const [id, setID] = useState([]);
-    const [animalList, setList] = useState(['cat', 'dog', "frog", 'horsey', "piggy"])
+    const [animalList, setList] = useState(['cat', 'dog'])
+    const [pets, setPets] = useState([
+        {cat: {
+        number: 1 
+    }, 
+        dog: {
+        number: 1
+    }
+ }]);
 
     const serviceList = ["Walking", "Drop-in-Visits", "House-Sitting", "One-Time", "Re-Occuring"]
    
@@ -30,7 +36,7 @@ const Schedule = () => {
 
         let submit = async () => {
             try {
-                const docRef = addDoc(collection(firestore, "users"), {
+                const docRef = addDoc(collection(firestore, "schedule"), {
                   location: location,
                   startDate: startdate,
                   endDate: enddate,
@@ -42,6 +48,10 @@ const Schedule = () => {
               }
         }
 
+    useEffect(() => {
+        console.log(pets)
+    })
+
         return (
             <View style={styles.services}>
                 <Text style={styles.title}>Where do you live?</Text>
@@ -50,7 +60,6 @@ const Schedule = () => {
                 <Text>What kind of Pets do you have?</Text>
                 <View style={styles.buttonGroup}>
                     {  
-                    console.log(animalList),
                             animalList.map((tag) => {
                                 return (
                                    <AnimalButton animalz={tag}/>
@@ -59,13 +68,20 @@ const Schedule = () => {
                     }
                 </View>
                
-                 <Button title="Add new pet" style={styles.new} />
                  <Formik
                  initialValues={{pet: ''}}
                  onSubmit={(values, actions) => {
+                let freshPet = {
+                    values: {
+                        number: 1
+                    }
+                }
+
                     actions.resetForm();
                    setList([...animalList,values.pet])
-                 }}
+                   setPets([...pets, freshPet ])
+                 }
+                }
                  >
                      {
                          (props) => (
@@ -77,7 +93,7 @@ const Schedule = () => {
                                  onChangeText={props.handleChange('pet')}
                                  value={props.values.pet}
                                  />
-                              <Button style={styles.button} onPress={props.handleSubmit} title="Submit" />
+                              <Button style={styles.button} onPress={props.handleSubmit} title="Add a new Pet" />
                             </View> 
                          )
                      }
