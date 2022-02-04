@@ -3,16 +3,13 @@ import {View, StyleSheet, Text, TextInput, Button, Modal} from "react-native";
 import { Formik } from 'formik';
 import { firestore } from './firebase';
 import {addDoc, collection} from 'firebase/firestore'
+// import {Stars} from 'form-ratings'
 
 const Reviewform = ({refreshState}) => {
     const [modalOne, setModalOneVisible] = useState(false);
    
-
- 
-
-
 const sendReview = (values) => {
-   const docRef = addDoc(collection(firestore, "card"), {
+   const docRef = addDoc(collection(firestore, "review"), {
      data: {
       Title: values.title,
       Message: values.message,
@@ -54,6 +51,10 @@ const sendReview = (values) => {
                  <View
                  style={styles.modalView}
                  >
+               
+          
+               {/* <Stars value={props.values.rating} color="red" /> */}
+      
                       <TextInput
                       style={styles.input}
                       placeholder='Title'
@@ -70,6 +71,7 @@ const sendReview = (values) => {
                  </View>
                )}
              </Formik>
+
 </View>
                
    </Modal> 

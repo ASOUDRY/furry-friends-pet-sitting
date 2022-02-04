@@ -9,6 +9,7 @@ const ServiceButton = (props) => {
         <View>
             <Button title={props.title}
             containerStyle={styles.button}
+            
             />
         </View>
     );
