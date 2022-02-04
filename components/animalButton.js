@@ -1,13 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Button } from 'react-native-elements';
 import { View, StyleSheet } from 'react-native';
 
 const AnimalButton = props => {
+
     const [animalNumber, setanimalNumber] = useState(1)
 
     return (
         <View style={styles.buttonGrouptrue} >
-                                    <Button title={animalNumber + ' ' + props.animalz} 
+                                    <Button title={animalNumber + ' ' + props.animalz}
+                                    onPress={() => {console.log(props.animalz)}} 
                                     containerStyle={styles.button}
                                     />
                                             <View style={styles.directionalButtons}>
@@ -19,7 +21,8 @@ const AnimalButton = props => {
                             }}
                             iconRight
                             onPress={() => {
-                               setanimalNumber(animalNumber + 1)
+                                setanimalNumber(animalNumber + 1)
+                               props.test([props.animalz, animalNumber + 1])   
                             }}
                           />
                            <Button icon={{
@@ -31,6 +34,7 @@ const AnimalButton = props => {
                             iconRight
                             onPress={() => {
                                 setanimalNumber(animalNumber - 1)
+                                props.test([props.animalz, animalNumber - 1])   
                             }}
                           />
                           </View>
