@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../stack/home';
 import Contact from '../stack/contact';
