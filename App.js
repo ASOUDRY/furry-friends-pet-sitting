@@ -4,10 +4,9 @@ import {NavigationContainer} from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import 'react-native-gesture-handler';
 import Profile from './screens/profile';
-import Registration from './screens/register';
-import Login from './screens/login';
 import Schedule from './screens/schedule'
 import Stack from './screens/stack';
+import Identification from './screens/identification';
 
 
 export default function App() {
@@ -23,17 +22,14 @@ export default function App() {
        name="Profile"
        component={Profile}
       />
-       <Drawer.Screen
-       name="Login"
-       component={Login}
-      />
-      <Drawer.Screen
-      name="Registration"
-      component={Registration}
-      />
       <Drawer.Screen
        name="Schedule"
        component={Schedule}
+      />
+      <Drawer.Screen
+      name="Identification"
+      component={Identification}
+      options={{headerShown: false, title: "Login"}}
       />
     </Drawer.Navigator>
   </NavigationContainer>
