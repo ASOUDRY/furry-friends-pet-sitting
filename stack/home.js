@@ -14,7 +14,7 @@ const Home = ({route, navigation}) => {
       if (ReviewList.length != 0) {
         setReviewList([])
       }
-     const querySnapshot = await getDocs(collection(firestore, "card"));
+     const querySnapshot = await getDocs(collection(firestore, "review"));
      querySnapshot.forEach((doc) => {
          const {Title, Message} = doc.data().data
          setReviewList((ReviewList) => [...ReviewList, {
@@ -150,7 +150,7 @@ const [ReviewList, setReviewList] = useState([])
         </View>
         <View style={styles.services}>
           <Reviewform refreshState={refreshState}/>
-            <Button  title="More reviews" onPress={() => navigation.navigate('Reviews', {fetch: ReviewList})} 
+            <Button  title="More reviews" onPress={() => navigation.navigate('Reviews', {reviewData: ReviewList})} 
         />
     
       
