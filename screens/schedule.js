@@ -15,32 +15,54 @@ const Schedule = () => {
     const [enddate, setEndDate] = useState(false);
     const [id, setID] = useState([]);
     const [animalList, setList] = useState(['cat', 'dog'])
-    const [pets, setPets] = useState([
-        {cat: {
+    const [service, setService] = useState({});
+    const [pets, setPets] = useState({
+        cat: {
         number: 1 
     }, 
         dog: {
         number: 1
     }
- }]);
+ });
 
-    const serviceList = ["Walking", "Drop-in-Visits", "House-Sitting", "One-Time", "Re-Occuring"]
+    let passOver = (prop) => {
    
-        let click = (value) => {
+     let name = prop[0]
+     let nombre = prop[1]
+    
+     setPets(prevState => ({
+        ...prevState,           // copy all other field/objects
+        [name]: {              // recreate the object that contains the field to update
+          ...prevState.name, // copy all the fields of the object
+          number: nombre    // overwrite the value of the field to update
+        }
+      }));
+ }
+
+ let servicePass = () => {
+
+ }
+
+
+    const serviceList = ["Walking", "Drop-in-Visits", "House-Sitting"]
+    const datesList = ["One-Time", "Re-Occuring"]
+   
+    let click = (value) => {
               setLocation(value)       
         }
-        let dates = (value1, value2) => {
+    let dates = (value1, value2) => {
             setStartDate(value1),
             setEndDate(value2)
         }
 
-        let submit = async () => {
+    let submit = async () => {
             try {
                 const docRef = addDoc(collection(firestore, "schedule"), {
                   location: location,
+                  animals: pets,
                   startDate: startdate,
                   endDate: enddate,
-                  id: id
+                //   id: id
                 });
                 // console.log("Document written with ID: ", docRef.id);
               } catch (e) {
@@ -48,7 +70,7 @@ const Schedule = () => {
               }
         }
 
-    useEffect(() => {
+        useEffect(() => {
         console.log(pets)
     })
 
@@ -62,17 +84,19 @@ const Schedule = () => {
                     {  
                             animalList.map((tag) => {
                                 return (
-                                   <AnimalButton animalz={tag}/>
+                                   <AnimalButton test={passOver}  animalz={tag}/>
                                 )
                             })
                     }
                 </View>
                
-                 <Formik
+                 <Formik 
+                     
                  initialValues={{pet: ''}}
                  onSubmit={(values, actions) => {
+                     console.log(values.pet)
                 let freshPet = {
-                    values: {
+                    [values.pet]: {
                         number: 1
                     }
                 }
@@ -104,6 +128,19 @@ const Schedule = () => {
                 >
                 {
                     serviceList.map((title) => {
+                        return (
+                            <ServiceButton title={title} />
+                        )
+                    })
+                }
+                </View>
+
+                <Text>How many visits do you need.?</Text>
+                <View
+                style={styles.servicebutton}
+                >
+                {
+                    datesList.map((title) => {
                         return (
                             <ServiceButton title={title} />
                         )
