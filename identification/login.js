@@ -1,15 +1,17 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useState, useEffect } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform} from 'react-native'
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from '@firebase/auth'
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from '@firebase/auth'
 import { auth } from '../components/firebase.js'
 import { firestore } from '../components/firebase';
 import {getDocs, collection} from 'firebase/firestore'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
 
+  console.log(auth)
   useEffect(() => {
-    initReview()
+    storeData(auth.currentUser.uid)
 }, [])
 
   const [email, setEmail] = useState('')
@@ -25,20 +27,6 @@ const Login = () => {
     setUser(currentUser)
   })
 
-  const initReview = async () => {
-    try {
-     const querySnapshot = await getDocs(collection(firestore, "card"));
-   
-     querySnapshot.forEach((doc) => {
-         const {Title, Message} = doc.data().data
-         setfirstReview((firstReview) => [...firstReview, {
-             Message: Message,
-             Title: Title
-         }])
-     });
-    } catch (error) {
-     console.error(error);      
- }}
 
   const login = async () => {
     try {
@@ -48,6 +36,16 @@ const Login = () => {
       console.log(error.message)
     } 
   }
+
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem('@storage_Key', value)
+    } catch (e) {
+      // saving error
+    }
+  }
+
+
   const signout = async () => {
     await signOut(auth)
     console.log(user)
