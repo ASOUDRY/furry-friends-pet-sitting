@@ -8,8 +8,17 @@ import {addDoc, collection} from 'firebase/firestore'
 import { Formik } from 'formik';
 import { AnimalButton } from '../components/animalButton.js';
 import { ServiceButton } from '../components/serviceButton.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { confirmPasswordReset } from 'firebase/auth';
 
 const Schedule = () => {
+
+    useEffect(() => {
+        console.log(pets)
+        getData()
+
+    })
+
     const [location, setLocation] = useState(false);
     const [startdate, setStartDate] = useState(false);
     const [enddate, setEndDate] = useState(false);
@@ -24,6 +33,28 @@ const Schedule = () => {
         number: 1
     }
  });
+
+
+ const getData = async () => {
+    try {
+        console.log(
+            "boop"
+        )
+      const value = await AsyncStorage.getItem('@storage_Key')
+      if(value !== null) {
+    //    console.log(value)
+       setID(value)
+       console.log(id)
+      }
+      else {
+          console.log("no Id")
+      }
+    } catch(e) {
+      // error reading value
+    }
+  }
+
+
 
     let passOver = (prop) => {
    
@@ -62,17 +93,14 @@ const Schedule = () => {
                   animals: pets,
                   startDate: startdate,
                   endDate: enddate,
-                //   id: id
+                  id: id,
+                  current: true
                 });
                 // console.log("Document written with ID: ", docRef.id);
               } catch (e) {
                 console.error("Error adding document: ", e);
               }
         }
-
-        useEffect(() => {
-        console.log(pets)
-    })
 
         return (
             <View style={styles.services}>
