@@ -6,7 +6,7 @@ import {Text, Card, Button} from 'react-native-elements';
 
 const ReviewPage = ({navigation, route}) => {
 
-const saveData = route.params.fetch
+const saveData = route.params.reviewData
 
         return (   
             <ScrollView>
