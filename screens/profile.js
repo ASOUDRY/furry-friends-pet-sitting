@@ -1,44 +1,161 @@
-import React from 'react';
-import {View, Text, StyleSheet} from "react-native";
-import { Button, Card} from 'react-native-elements';
+import React, {useEffect} from 'react';
+import {View, ScrollView, StyleSheet} from "react-native";
+import { Button, Card, Tab, TabView, Text} from 'react-native-elements';
+import { firestore } from '../components/firebase';
+import {getDocs, collection, where, query} from 'firebase/firestore'
 
-export default class Profile extends React.Component {
+const Profile = ({navigation}) => {
+  const [index, setIndex] = React.useState(0);
+  const [currentDoc, setCurrent] = React.useState([])
+  const [oldDoc, setOld] = React.useState([])
+  const [arg, setArg] = React.useState()
+  const [argNotes, setNotes] = React.useState()
+  const [run, setRun] = React.useState(1)
 
-    constructor(props) {
-        super(props);
-      }        
+  const getData = async () => {
+   if (!currentDoc.length) {
+    const q = query(collection(firestore, "schedule"), where("current", "==", true));
+    const querySnapshot = await getDocs(q)
+    querySnapshot.forEach((doc) => {
+        setCurrent((currentDoc) => [...currentDoc, doc.data()
+        ])
+    })
+  }
+
+  if (!oldDoc.length) {
+    const q = query(collection(firestore, "schedule"), where("current", "==", false));
+    const querySnapshot = await getDocs(q)
+    querySnapshot.forEach((doc) => {
+        setOld((oldDoc) => [...oldDoc, doc.data()
+        ])
+    })
+  }
+  console.log(oldDoc)
+   if (currentDoc[0]) {
    
-    render() {
-        return (
+     getArg(currentDoc[0].animals)
+   }
 
-            <View>
-                 <Card>
-            <Card.Title>Home</Card.Title>
-            <Card.Divider/>
-            </Card>
-            <Text>Upcoming</Text>
+  
+   setRun(run + 1)
+  }
+ 
+  const getArg = (animals) => {
+  let thing = Object.entries(animals)
+  setArg(thing)  
+  // console.log(arg)
+  }
+
+  useEffect(() => {
+   getData()
+  
+}, [run === 2])
+
+if (!arg) {
+  return null
+}  
+else {
+  return (
+    <>
+         <Card>
+         <Button 
+          icon={{
+            name: 'edit',
+            type: 'font-awesome',
+            // size: 15,
+            color: 'white',
+          }}
+          iconRight
+          style={styles.button}
+           />
+           <Text>
+             Name:
+           </Text>
+           <Text>
+             Phone number
+           </Text>
+           <Text>
+             Email
+           </Text>
+           <Text>
+           UserName
+           </Text> 
+           <Text>
+           Password
+           </Text>
+          </Card>
+       <Tab
+          value={index}
+          onChange={(e) => setIndex(e)}
+          indicatorStyle={{
+            backgroundColor: 'black',
+            height: 3,
+          }}
+          variant="default"
+        >
+          <Tab.Item
+            title="UpComing"
+            titleStyle={{ fontSize: 12 }}
+       
+          />
+          <Tab.Item
+            title="Pet Update"
+            titleStyle={{ fontSize: 12 }}
+       
+          />
+        </Tab>
+  
+        <TabView value={index} onChange={setIndex} animationType="spring">
+          <TabView.Item style={{ width: '100%' }}>
+           <Card>
+             <Card.Title>{currentDoc[0].appointment}</Card.Title>
+             <Card.Divider/>
+             <Text>{currentDoc[0].location}</Text> 
+          {
+            arg.map((key) => {
+              return (
+                <Text>{key[0] + " " + key[1].number}</Text>
+              )
+            })
+          }
+
+      <Text style={styles.box}> {currentDoc[0].notes}</Text>
+            <Text>{currentDoc[0].startDate}</Text>
+            <Text>{currentDoc[0].endDate}</Text>
+           </Card>
+          </TabView.Item>
+
+          <TabView.Item style={{ height: '100%', width: '100%' }}>
+            <ScrollView>
+            {
+          oldDoc[0].ownerNotes.map((key) => {
+            return (
               <Card>
-              <Card.Title>Drop in Visits</Card.Title>
-              <Card.Divider/>
+                 <Text
+                 style={styles.box}
+                 >{key}</Text>
               </Card>
-
-
-              <View style={styles.services}
-              >
-                 <Card>
-                <Card.Title>Past Visit</Card.Title>
-                <Card.Divider/>
-                </Card>
-                  <Card>
-                  <Card.Title>Past Visit</Card.Title>
-                  <Card.Divider/>
-                  </Card>
-            </View>               
-                  <Button  title="More Info"/>
-            </View>
-        )
-    }
+            )
+          })
+        }
+        <Text>Past Visit</Text>
+        <View style={styles.text}>
+       
+        <Button title="More Review"
+        onPress={() => navigation.navigate('OtherReview', {oldDoc: oldDoc}
+        )}
+        />
+        </View>
+            </ScrollView>
+          </TabView.Item>
+        </TabView>
+    </>
+    )
 }
+
+}
+
+export default Profile
 
 const styles = StyleSheet.create({
     title:{
@@ -54,4 +171,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 10
     },
+    button: {
+      position: 'relative',
+      width: 50,
+      left: 320
+    },
+    box: {
+      borderWidth: 1,
+      height: 90
+    },
+    text: {
+      justifyContent: 'center',
+      flexDirection: 'row',
+    }
+
 })
