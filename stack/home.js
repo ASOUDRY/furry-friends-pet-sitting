@@ -34,7 +34,6 @@ const refreshState = () => {
 
 useEffect(() => {
   fetchdata()
-  console.log(toggle);
 }, [toggle]);
 
 const [ReviewList, setReviewList] = useState([])
