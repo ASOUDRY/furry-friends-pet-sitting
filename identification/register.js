@@ -51,7 +51,18 @@ const Registration = () => {
         >
           <Text style={styles.buttonOutlineText}>Register</Text>
         </TouchableOpacity>
+      
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Login')
+          }}
+          style={[styles.button, styles.buttonOutline]}
+        >
+          <Text style={styles.buttonOutlineText}>Back to Login</Text>
+        </TouchableOpacity>
       </View>
+
+     
     </KeyboardAvoidingView>
   )
 }
