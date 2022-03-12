@@ -1,61 +1,68 @@
-import { useNavigation } from '@react-navigation/core'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform} from 'react-native'
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from '@firebase/auth'
 import { auth } from '../components/firebase.js'
-import { firestore } from '../components/firebase';
-import {getDocs, collection} from 'firebase/firestore'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserContext } from '../App.js'
 
-const Login = () => {
 
-  console.log(auth)
+const Login = ({navigation}) => {
+  console.log("useContext is" + useContext)
+  const {signIn} = useContext(UserContext)
+
+  const attempt = async () => {
+    if (auth.currentUser) {
+      // console.log("This is the uid " + auth.currentUser.uid)
+      await AsyncStorage.setItem('@storage_Key', auth.currentUser.uid)
+    }
+    else {
+      // console.log("You are not logged in")
+    }
+  }
+
   useEffect(() => {
-    storeData(auth.currentUser.uid)
-}, [])
+    let isMounted = true;
+    // console.log("load")
+    if (isMounted) {
+      attempt()
+    }
+    return () => {
+      // console.log("Login clean-up")
+      isMounted = false;
+    } ;
+},)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [firstReview, setfirstReview] = useState('')
 
-  const navigation = useNavigation()
+  // const navigation = useNavigation()
   const [registerEmail, setRegisterEmail] = useState('')
   const [registerPassword, setRegisterPassword] = useState('')
   const [user, setUser] = useState('')
+  const [toggle, setToggle] = useState(false);
 
   onAuthStateChanged(auth, (currentUser) => {
     setUser(currentUser)
   })
 
-
   const login = async () => {
     try {
       const user = await signInWithEmailAndPassword(auth, registerEmail, registerPassword)
+      setToggle(!toggle)
+      signIn()
+      // navigation.navigate('screens', {screen: 'Stack', })
       navigation.navigate('Stack', {screen: 'Home', params: {inReview: firstReview}})
     } catch (error) {
       console.log(error.message)
     } 
   }
 
-  const storeData = async (value) => {
-    try {
-      await AsyncStorage.setItem('@storage_Key', value)
-    } catch (e) {
-      // saving error
-    }
-  }
-
-
-  const signout = async () => {
-    await signOut(auth)
-    console.log(user)
-  }
-
   return (
     <KeyboardAvoidingView
     behavior="height"
       style={styles.container}
-      behavior="padding"
+      // behavior="padding"
     >
       <View style={styles.inputContainer}>
         <TextInput
@@ -78,6 +85,13 @@ const Login = () => {
         >
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
+
+        {/* <TouchableOpacity
+          onPress={() => {signIn()}}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Test</Text>
+        </TouchableOpacity> */}
 
         <TouchableOpacity
           onPress={() => {
