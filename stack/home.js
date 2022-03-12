@@ -4,6 +4,7 @@ import { Button, Text, Card } from 'react-native-elements';
 import { Reviewform} from '../components/reviewform';
 import { firestore } from '../components/firebase';
 import {getDocs, collection} from 'firebase/firestore'
+import { auth } from '../components/firebase.js'
 
 const Home = ({route, navigation}) => { 
 
@@ -33,6 +34,7 @@ const refreshState = () => {
 }
 
 useEffect(() => {
+  console.log(auth)
   fetchdata()
 }, [toggle]);
 
@@ -99,6 +101,13 @@ const [ReviewList, setReviewList] = useState([])
             <TouchableOpacity  onPress={() => { setWalkingTab( "Let me walk your pupper."); }}>
               <Card>
                   <Card.Title>Walking</Card.Title>
+                  <Card.Divider/>
+              </Card>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => { setWalkingTab( "Let me service your pupper."); }}>
+              <Card>
+                  <Card.Title>Drop In</Card.Title>
                   <Card.Divider/>
               </Card>
             </TouchableOpacity>
