@@ -12,11 +12,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { confirmPasswordReset } from 'firebase/auth';
 
 const Schedule = () => {
-
     useEffect(() => {
-        console.log(pets)
         getData()
-
     })
 
     const [location, setLocation] = useState(false);
@@ -24,7 +21,8 @@ const Schedule = () => {
     const [enddate, setEndDate] = useState(false);
     const [id, setID] = useState([]);
     const [animalList, setList] = useState(['cat', 'dog'])
-    const [service, setService] = useState({});
+    const [service, setService] = useState([]);
+    const [test, setTest] = useState(false)
     const [pets, setPets] = useState({
         cat: {
         number: 1 
@@ -37,14 +35,10 @@ const Schedule = () => {
 
  const getData = async () => {
     try {
-        console.log(
-            "boop"
-        )
+        
       const value = await AsyncStorage.getItem('@storage_Key')
       if(value !== null) {
-    //    console.log(value)
        setID(value)
-       console.log(id)
       }
       else {
           console.log("no Id")
@@ -70,21 +64,44 @@ const Schedule = () => {
       }));
  }
 
- let servicePass = () => {
-
+ const removePets = (target) => {
+     setList(
+         animalList.filter(key => key != target) 
+    )
  }
 
+ 
+const setType = (state, title) => {
+if (state === false) {
+    setService([...service, title])
+}
+else {
+    setService(
+                 service.filter(key => key != title) 
+            )
+    }
+}
 
-    const serviceList = ["Walking", "Drop-in-Visits", "House-Sitting"]
+const setVisit = (prop) => {
+    console.log(prop)
+    triggerOpen()
+}
+
+    const serviceList = ["Walking", "Drop-In", "House-Sitting"]
     const datesList = ["One-Time", "Re-Occuring"]
    
     let click = (value) => {
               setLocation(value)       
         }
     let dates = (value1, value2) => {
-            setStartDate(value1),
-            setEndDate(value2)
+            setStartDate(JSON.stringify(value1)),
+            setEndDate(JSON.stringify(value2))
         }
+
+    let date = (value) => {
+        setStartDate(JSON.stringify(value)),
+        setEndDate(JSON.stringify(value))
+    }
 
     let submit = async () => {
             try {
@@ -94,7 +111,8 @@ const Schedule = () => {
                   startDate: startdate,
                   endDate: enddate,
                   id: id,
-                  current: true
+                  current: true,
+                  service: service
                 });
                 // console.log("Document written with ID: ", docRef.id);
               } catch (e) {
@@ -112,7 +130,7 @@ const Schedule = () => {
                     {  
                             animalList.map((tag) => {
                                 return (
-                                   <AnimalButton test={passOver}  animalz={tag}/>
+                                   <AnimalButton remove={removePets} test={passOver}  animalz={tag}/>
                                 )
                             })
                     }
@@ -150,6 +168,7 @@ const Schedule = () => {
                          )
                      }
                  </Formik>
+                
                 <Text>What services do you need?</Text>
                 <View
                 style={styles.servicebutton}
@@ -157,27 +176,14 @@ const Schedule = () => {
                 {
                     serviceList.map((title) => {
                         return (
-                            <ServiceButton title={title} />
+                            <ServiceButton returntype={setType} title={title} />
                         )
                     })
                 }
                 </View>
 
                 <Text>How many visits do you need.?</Text>
-                <View
-                style={styles.servicebutton}
-                >
-                {
-                    datesList.map((title) => {
-                        return (
-                            <ServiceButton title={title} />
-                        )
-                    })
-                }
-                </View>
-               
-                <Text style={styles.title}>Where dates will you need?</Text>
-                <Calender dates={dates}/>
+                <Calender date={date} dates={dates}/>
                 <Button title="Submit" onPress={() => submit() } /> 
             </View>   
         )
