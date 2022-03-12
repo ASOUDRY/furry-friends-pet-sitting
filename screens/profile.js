@@ -1,8 +1,9 @@
 import React, {useEffect} from 'react';
-import {View, ScrollView, StyleSheet} from "react-native";
+import {View, ScrollView, StyleSheet, Modal} from "react-native";
 import { Button, Card, Tab, TabView, Text} from 'react-native-elements';
 import { firestore } from '../components/firebase';
 import {getDocs, collection, where, query} from 'firebase/firestore'
+import { SetProfile } from '../components/setProfile';
 
 const Profile = ({navigation}) => {
   const [index, setIndex] = React.useState(0);
@@ -11,11 +12,11 @@ const Profile = ({navigation}) => {
   const [arg, setArg] = React.useState()
   const [argNotes, setNotes] = React.useState()
   const [run, setRun] = React.useState(1)
-
-  const getData = async () => {
+ 
+  const getData = async (abort) => {
    if (!currentDoc.length) {
     const q = query(collection(firestore, "schedule"), where("current", "==", true));
-    const querySnapshot = await getDocs(q)
+    const querySnapshot = await getDocs(q, {signal: abort.signal})
     querySnapshot.forEach((doc) => {
         setCurrent((currentDoc) => [...currentDoc, doc.data()
         ])
@@ -24,31 +25,33 @@ const Profile = ({navigation}) => {
 
   if (!oldDoc.length) {
     const q = query(collection(firestore, "schedule"), where("current", "==", false));
-    const querySnapshot = await getDocs(q)
+    const querySnapshot = await getDocs(q, {signal: abort.signal})
     querySnapshot.forEach((doc) => {
         setOld((oldDoc) => [...oldDoc, doc.data()
         ])
     })
   }
-  console.log(oldDoc)
+ 
    if (currentDoc[0]) {
-   
      getArg(currentDoc[0].animals)
    }
 
-  
    setRun(run + 1)
   }
  
   const getArg = (animals) => {
   let thing = Object.entries(animals)
   setArg(thing)  
-  // console.log(arg)
   }
 
   useEffect(() => {
-   getData()
-  
+    const abortController = new AbortController();
+   getData(abortController)
+
+   return () => {
+    abortController.abort();
+console.log("prof clean up")
+  } ;  
 }, [run === 2])
 
 if (!arg) {
@@ -58,6 +61,7 @@ else {
   return (
     <>
          <Card>
+           <SetProfile/>
          <Button 
           icon={{
             name: 'edit',
@@ -107,6 +111,7 @@ else {
   
         <TabView value={index} onChange={setIndex} animationType="spring">
           <TabView.Item style={{ width: '100%' }}>
+            {/* Fix issue with date object */}
            <Card>
              <Card.Title>{currentDoc[0].appointment}</Card.Title>
              <Card.Divider/>
@@ -114,7 +119,9 @@ else {
           {
             arg.map((key) => {
               return (
-                <Text>{key[0] + " " + key[1].number}</Text>
+                <Text
+                key={Math.random()}
+                >{key[0] + " " + key[1].number}</Text>
               )
             })
           }
@@ -130,7 +137,9 @@ else {
             {
           oldDoc[0].ownerNotes.map((key) => {
             return (
-              <Card>
+              <Card
+              key={Math.random()}
+              >
                  <Text
                  style={styles.box}
                  >{key}</Text>
