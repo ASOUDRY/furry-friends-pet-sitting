@@ -32,40 +32,55 @@ const Calender = ({date, dates}) => {
     setShowDatePickerSingle(false)
   }
 
-  const onConfirm2 = (startDateString, EndDateString) => {
+  const onConfirm2 = ({startDateString, endDateString}) => {
     // You should close the modal in here
     setShowDatePicker2(false)
 
-    dates(startDateString, EndDateString)
+    dates(startDateString.toString().substring(4,15), endDateString.toString().substring(4,15))
   }
 
   const onConfirmSingle = (output) => {
     // You should close the modal in here
     setShowDatePickerSingle(false)
 
-    date(output)
+    console.log(
+   
+      )
+
+    date(output.toString().substring(4,15))
   }
 
+  const colorOptions = {
+    headerColor:'#6F7643',
+    weekDaysColor: '#BEC3AA'
+    // headerColor:'#9DD9D2',
+    // backgroundColor:'#FFF8F0'
+  }
   
 
   return (
     <View style={styles.container}>
+        <View
+        style={{ flexDirection: 'row',}}
+        >
         <ServiceButton 
         returnvisit={openDatePickerSingle} 
         title={"One-Time"} />
         <ServiceButton returnvisit={setVisit} title={"Re-Occuring"} />
-      {/* <Button title="open" onPress={openDatePicker} /> */}
+        </View>
       <DatePicker
         isVisible={showDatePicker2}
         mode={'range'}
         onCancel={onCancel2}
         onConfirm={onConfirm2}
+        colorOptions={colorOptions}
       />
       <DatePicker
         isVisible={showDatePickerSingle}
         mode={'single'}
         onCancel={onCancelSingle}
         onConfirm={onConfirmSingle}
+        colorOptions={colorOptions}
       />
     </View>
   )
@@ -73,11 +88,16 @@ const Calender = ({date, dates}) => {
 
 const styles = StyleSheet.create({
   container: {
+    
     // flex: 1,
-    // backgroundColor: '#fff',
+    // backgroundColor: '#6F7643',
     // justifyContent: 'center',
     // alignItems: 'center'
-  }
+  },
+  // color : {
+  //   headerColor:'#9DD9D2',
+  //   backgroundColor:'#FFF8F0'
+  // }
 })
 
 
