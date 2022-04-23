@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useReducer, createContext, useMemo} from 'react';
+import React, {useEffect, useReducer, createContext, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import 'react-native-gesture-handler';
 import Profile from './screens/profile';
@@ -9,7 +9,7 @@ import Stack from './screens/stack';
 import Identification from './screens/identification';
 import { auth } from './components/firebase.js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Button, Text } from 'react-native-elements';
+import { Button } from 'react-native-elements';
 import { signOut } from '@firebase/auth'
 
 export const UserContext = createContext();
@@ -54,11 +54,14 @@ export default function App() {
   },[])
   
   const restoreToken = async () => {
+
     const value = await AsyncStorage.getItem('@storage_Key')
-    console.log("this is " + value)
+    
+    if (auth.currentUser) {
     if (value) {
       dispatch({ type: 'SIGN_IN' })
     } 
+  }
   }
 
   const loggingOut = async () => {
@@ -69,54 +72,56 @@ export default function App() {
   }
 
   const Drawer = createDrawerNavigator();
+
+
   return (
     <NavigationContainer>
       <UserContext.Provider value={authContext}>
-<Drawer.Navigator>
+<Drawer.Navigator
+
+screenOptions={
+  {
+    headerStyle: {backgroundColor: '#F2F5EE', },
+    headerShadowVisible: true,
+    headerTitle: '',
+    headerRight: () => (
+      <Button
+        onPress={() => {
+          loggingOut()
+        }}
+        buttonStyle={styles.addButton}
+        titleStyle={{color: 'black'}}
+        title="Log Out"
+      />
+    ),
+  }
+}
+>
     {state.loggedIn === true ? (
       <>
-       <Drawer.Screen
+          <Drawer.Screen
          name="Stack"
          component={Stack}
-         options={{headerShown: false, title: "Home"
-        }}
          />
-        <Drawer.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            headerRight: () => (
-                  <Button
-                    onPress={() => {
-                      loggingOut()
-                    }}
-                    title="Log out"
-                    color="#fff"
-                  />
-                ),
-          }}
-         />
+
          <Drawer.Screen
           name="Schedule"
           component={Schedule}
          />
+
+<Drawer.Screen
+          name="Visit Info"
+          component={Profile}
+         />
       </>  
     ) : (
      <>
-       <Drawer.Screen
-         name="Stack"
-         component={Stack}
-         options={{headerShown: false,
-          title: "Home"
-        }}
-         />
            <Drawer.Screen
          name="Identification"
          component={Identification}
          options={{headerShown: false}}
          />
      </>
-     
     )}
   </Drawer.Navigator>
   </UserContext.Provider>
@@ -125,8 +130,13 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  menu: {
-      position: 'absolute',
-      color: "black",
+  addButton: {
+    
+    height: 35,
+    width: 110,
+    backgroundColor: '#6F7643',
+    borderRadius: 10,
+    marginBottom: 25,
+    marginTop: 20
   }
 })
