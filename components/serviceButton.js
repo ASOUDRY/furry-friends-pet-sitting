@@ -1,27 +1,40 @@
-import React from 'react';
-import { Button } from 'react-native-elements';
-import { View, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 
-
-const ServiceButton = (props) => {
-
+const ServiceButton = ({title, returnvisit}) => {
     return (
         <View>
-            <Button title={props.title}
-            containerStyle={styles.button}
-            />
+<TouchableOpacity
+    onPress={() => {returnvisit(title)}} style={styles.button}
+    >
+        <Text>{title}</Text>
+      </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    button: {
-        backgroundColor: 'black',
-        color: 'black',
+    clicked: {
+         backgroundColor: 'red',
+         borderWidth: 2,
+         borderColor: 'white',
+         borderRadius: 30,
+    },
+    serviceButtonImage: {
+        height: '80%',
+        width: '70%',
+      },
+      button: {
         borderWidth: 2,
         borderColor: 'white',
-        borderRadius: 30,
-    }
+        backgroundColor: 'white',
+        borderRadius: 10,
+        height: 45,
+        width: 185,
+        alignItems: "center",
+        margin: 10,
+        padding: 10
+      },
 })
 
 export {ServiceButton}
