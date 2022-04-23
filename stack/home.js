@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import {View, ScrollView, StyleSheet, Modal, Pressable, TouchableOpacity, Image} from "react-native";
-import { Button, Text, Card } from 'react-native-elements';
-// import { Reviewform} from '../components/reviewform';
+import {View, ScrollView, StyleSheet, TouchableOpacity, Image} from "react-native";
+import {Text, Card } from 'react-native-elements';
 import { firestore } from '../components/firebase';
 import {getDocs, collection} from 'firebase/firestore'
-// import { auth } from '../components/firebase.js'
 import {AirbnbRating } from 'react-native-ratings';
 
 const Home = ({route, navigation}) => { 
 
-  // add react native extended stylesheet to write global variables to change the colors
+
 
   const [toggle, setToggle] = useState(false);
 
@@ -131,11 +129,7 @@ let colorStyle = () => {
                
         <View style={styles.secondRow}>
           <View></View>
-        <Text  style={styles.title}  >Customer Reviews</Text>
-
-        {/* <Reviewform 
-          
-        refreshState={refreshState}/> */}
+        <Text  style={styles.title}>Customer Reviews</Text>
 
           <TouchableOpacity
 
@@ -143,8 +137,6 @@ style={styles.rowImage}
 
        onPress={() => {
         navigation.navigate('Reviewform', 
-        // {refreshState: refreshState}
-        
         )
         }}
         >
@@ -156,7 +148,6 @@ style={styles.rowImage}
         </View>
       
         <View style={styles.reviews}>
-         
                   <Card
                         containerStyle={{borderRadius: 20}}
                         >
@@ -166,7 +157,6 @@ style={styles.rowImage}
                                  textAlign: 'center'
                             }}
                          >
-                            
                             {ReviewList[0].Name}</Text>
                             <Text>{ReviewList[0].Message}</Text>
                             <View
@@ -191,8 +181,7 @@ style={styles.rowImage}
                                  fontWeight: 'bold',
                                  textAlign: 'center'
                             }}
-                         >
-                            
+                         >  
                             {ReviewList[1].Name}</Text>
                             <Text>{ReviewList[1].Message}</Text>
                             <View
@@ -208,8 +197,6 @@ style={styles.rowImage}
                             />
                             </View> 
                         </Card>
-                        
-               
         </View>
         <TouchableOpacity
         style={{
@@ -237,14 +224,11 @@ const styles = StyleSheet.create({
       color: 'black',
       textAlign: 'center',
       fontSize: 20,
-      // marginRight: 20
     },
     title2: {
       color: 'black',
       textAlign: 'center',
       fontSize: 20,
-      // justifyContent: "center",
-    
   },
     example: {
       backgroundColor: 'white',
@@ -303,8 +287,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#F2F5EE',
       },
       serviceButton: {
-        // --forecolor: magenta;
-
         backgroundColor: 'white',
         borderRadius: 20,
         height: 112,
@@ -327,7 +309,6 @@ const styles = StyleSheet.create({
       },
       rowImage : {
       }
-      
 })
 
 export default Home
