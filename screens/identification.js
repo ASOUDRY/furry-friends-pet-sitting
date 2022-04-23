@@ -3,7 +3,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Registration from '../identification/register';
 import Login from '../identification/login';
 import Landing from '../identification/landing';
-import Success from '../identification/success';
 
 const Identification = () => {
     const [landingFade, setFade] = useState(false)
@@ -47,11 +46,7 @@ const Identification = () => {
          options={{headerShown: false}}
        /> 
 
-      <Stack.Screen
-         name="Success"
-         component={Success}
-         options={{headerShown: false}}
-       /> 
+     
        
      </>
     )}
