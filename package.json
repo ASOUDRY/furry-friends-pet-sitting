@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@codiac-team/react-native-google-places-autocomplete": "^2.4.4",
     "@react-native-async-storage/async-storage": "^1.15.14",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/drawer": "^6.1.8",
@@ -16,7 +17,6 @@
     "expo": "~43.0.2",
     "expo-status-bar": "~1.1.0",
     "firebase": "^9.6.0",
-    "form-ratings": "^0.3.0",
     "formik": "^2.2.9",
     "qs": "^6.9.6",
     "react": "17.0.1",
@@ -26,11 +26,13 @@
     "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-google-places-autocomplete": "^2.4.1",
-    "react-native-neat-date-picker": "^1.1.4",
+    "react-native-neat-date-picker": "^1.2.2",
+    "react-native-ratings": "^8.1.0",
     "react-native-reanimated": "~2.2.0",
-    "react-native-safe-area-context": "3.3.2",
+    "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "~3.8.0",
-    "react-native-web": "0.17.1"
+    "react-native-web": "0.17.1",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
