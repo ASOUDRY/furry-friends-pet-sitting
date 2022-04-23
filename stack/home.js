@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import {View, ScrollView, StyleSheet, Modal, Pressable, TouchableOpacity, Image} from "react-native";
 import { Button, Text, Card } from 'react-native-elements';
-import { Reviewform} from '../components/reviewform';
+// import { Reviewform} from '../components/reviewform';
 import { firestore } from '../components/firebase';
 import {getDocs, collection} from 'firebase/firestore'
-import { auth } from '../components/firebase.js'
+// import { auth } from '../components/firebase.js'
+import {AirbnbRating } from 'react-native-ratings';
 
 const Home = ({route, navigation}) => { 
+
+  // add react native extended stylesheet to write global variables to change the colors
 
   const [toggle, setToggle] = useState(false);
 
@@ -17,10 +20,11 @@ const Home = ({route, navigation}) => {
       }
      const querySnapshot = await getDocs(collection(firestore, "review"));
      querySnapshot.forEach((doc) => {
-         const {Title, Message} = doc.data().data
+         const {Name, Message, Rating} = doc.data().data
          setReviewList((ReviewList) => [...ReviewList, {
              Message: Message,
-             Title: Title
+             Name: Name,
+             Rating: Rating
          }])
      });
     } catch (error) {
@@ -34,166 +38,239 @@ const refreshState = () => {
 }
 
 useEffect(() => {
-  console.log(auth)
   fetchdata()
+  console.log(ReviewList)
 }, [toggle]);
 
-const [ReviewList, setReviewList] = useState([])
-    
-    const [modalOne, setModalOneVisible] = useState(false);
-    const [modalTwo, setModalTwoVisible] = useState(false);
-    const [walkingTab, setWalkingTab] = useState('');
+    const [ReviewList, setReviewList] = useState([])
+    const [walkingTab, setWalkingTab] = useState();
+
+let colorStyle = () => {
+  return {
+    backgroundColor: 'white'
+  }
+}
       
   if (ReviewList.length <= 1) {
     return null;
   }
   else {
     return (
-      <ScrollView>
-        <Modal
-         animationType="fade"
-          transparent={true}
-                    visible={modalOne}
-                    onRequestClose={() => {
-                      setModalOneVisible(!modalOne);
-                    }}
-                  >
-                <View 
-                style={styles.centeredView}
-                >
-                  <View style={styles.modalView}>
-                    <Text h3 style={styles.modalText}>{ReviewList[0].Title}</Text>
-                    <Text>
-                    {ReviewList[0].Message}
-                    </Text>
-                    <Button title={"Hide Modal"}
-                     onPress={() => setModalOneVisible(!modalOne)}
-                    />
-                  </View>
-                </View>
-        </Modal>
-
-        <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={modalTwo}
-                    onRequestClose={() => {
-                      setModalTwoVisible(!modalTwo);
-                    }}
-                  >
-                <View style={styles.centeredView}>
-                  <View style={styles.modalView}>
-                  <Text h3 style={styles.modalText}>{ReviewList[1].Title}</Text>
-                    <Text>
-                    {ReviewList[1].Message}
-                    </Text>
-                    <Button title={"Hide Modal"}
-                     onPress={() => setModalTwoVisible(!setModalTwoVisible)}
-                    />
-                  </View>
-                </View>
-        </Modal>
-     
-        <Text h2 style={styles.title}>Services</Text>
+      <ScrollView
+      style={styles.color}
+      >
+       
+        <Text h2 style={styles.title2}>Services</Text>
 
         <View style={styles.services}>
 
-            <TouchableOpacity  onPress={() => { setWalkingTab( "Let me walk your pupper."); }}>
-              <Card>
-                  <Card.Title>Walking</Card.Title>
-                  <Card.Divider/>
-              </Card>
+            <TouchableOpacity  onPress={() => { setWalkingTab( "Your dog will get a walk around the neighborhood.I'll make sure they get the exercise they want and need."); }
+          }
+          style={styles.serviceButton}
+          >
+              <Image 
+              style={styles.serviceButtonImage}
+              source={require('../assets/Dog.png')} />
+              <Text >Walking</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => { setWalkingTab( "Let me service your pupper."); }}>
-              <Card>
-                  <Card.Title>Drop In</Card.Title>
-                  <Card.Divider/>
-              </Card>
+            <TouchableOpacity  onPress={() => { setWalkingTab( "I will drop by multiple times during the day to play with your pets, feed them, give them potty breaks, or do anything else that they need.."); }
+          }
+          style={styles.serviceButton}
+          >
+              <Image 
+              style={styles.serviceButtonImage}
+              source={require('../assets/Bowl.png')} />
+              <Text >Drop-in Visits</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => { setWalkingTab( "Let me house sit your pupper."); }}>
-              <Card>
-                  <Card.Title>HouseVisit</Card.Title>
-                  <Card.Divider/>
-              </Card>
+            <TouchableOpacity  onPress={() => { setWalkingTab( "I will take care of your pets and your home. Just let me know about any specific tasks you need to get done."); }
+          }
+          style={styles.serviceButton}
+          >
+              <Image 
+              style={styles.serviceButtonImage}
+              source={require('../assets/House.png')} />
+              <Text >House Sitting</Text>
             </TouchableOpacity>
-                        
+
         </View>
 
-        <Text style={styles.example}> {walkingTab} </Text>
+          <View>
+            {
+          walkingTab ?
+          <Text style={styles.example}> {walkingTab} </Text>
+          :
+         <Text></Text>
+            }
+          </View>
           
-        <Text h2 style={styles.title} >Meet Your Caregiver</Text>
+        <Text style={styles.title2} >Meet Your Caregiver</Text>
 
         <View style={styles.services}>
-            <Image source={require('./image.png')} style={{ width: 200, height: 200, margin: 10  }} />
+            <Image source={require('../assets/IMG.png')} style={{ width: 120, height: 120, margin: 10, borderRadius: 100  }} />
                 <View style={styles.care}>
-                  <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
-                        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                        est laborum.
-                  </Text>
-                      <Button style={styles.learn} title="Contact Me" onPress={() => navigation.navigate('Contact')} />
+                  <Text style={styles.text} >Alexander Soudry.</Text>
+                  <Text
+                   style={styles.text}
+                  >Reisterstown, MD.</Text>
+                  <Text
+                   style={styles.text}
+                  >Life-long dog owner and lover!</Text>
+                  <TouchableOpacity
+                  style={styles.contactButton}
+                  >
+                    <Text 
+                    style={styles.contactButtonText}
+                    onPress={() => navigation.navigate('Contact')}
+                    >Contact Me!</Text>
+                  </TouchableOpacity>
+                      {/* <Button   /> */}
                 </View>
         </View>
                
-        <Text h2 style={styles.title} >Customer Reviews</Text>
-        <View style={styles.services}>
-         
-                <TouchableOpacity
-                onPress={() => {setModalOneVisible(true)}}
-                >
-                  <Card>
-                    <Card.Title>{ReviewList[0].Title}</Card.Title>
-                    <Card.Divider/>
-                  </Card>
-                </TouchableOpacity>
-                <TouchableOpacity
-                 onPress={() => {setModalTwoVisible(true)}}
-                > 
-                   <Card>
-                    <Card.Title>{ReviewList[1].Title}</Card.Title>
-                    <Card.Divider/>
-                  </Card>
-                </TouchableOpacity>
+        <View style={styles.secondRow}>
+          <View></View>
+        <Text  style={styles.title}  >Customer Reviews</Text>
+
+        {/* <Reviewform 
+          
+        refreshState={refreshState}/> */}
+
+          <TouchableOpacity
+
+style={styles.rowImage}
+
+       onPress={() => {
+        navigation.navigate('Reviewform', 
+        // {refreshState: refreshState}
+        
+        )
+        }}
+        >
+                <Image
+                source={require('../assets/Plus.png')}
+                />     
+        </TouchableOpacity> 
+
         </View>
-        <View style={styles.services}>
-          <Reviewform refreshState={refreshState}/>
-            <Button  title="More reviews" onPress={() => navigation.navigate('Reviews', {reviewData: ReviewList})} 
-        />
-    
       
+        <View style={styles.reviews}>
+         
+                  <Card
+                        containerStyle={{borderRadius: 20}}
+                        >
+                            <Text
+                             style={{ 
+                                 fontWeight: 'bold',
+                                 textAlign: 'center'
+                            }}
+                         >
+                            
+                            {ReviewList[0].Name}</Text>
+                            <Text>{ReviewList[0].Message}</Text>
+                            <View
+                            style={{flexDirection: 'row',
+                                justifyContent: 'flex-end'}}
+                            >
+                                <AirbnbRating
+                                size={15}
+                                isDisabled={true}
+                                showRating={false}
+                                count={5}
+                                defaultRating={ReviewList[0].Rating}
+                            />
+                            </View> 
+                        </Card>
+
+                        <Card
+                        containerStyle={{borderRadius: 20}}
+                        >
+                            <Text
+                             style={{ 
+                                 fontWeight: 'bold',
+                                 textAlign: 'center'
+                            }}
+                         >
+                            
+                            {ReviewList[1].Name}</Text>
+                            <Text>{ReviewList[1].Message}</Text>
+                            <View
+                            style={{flexDirection: 'row',
+                                justifyContent: 'flex-end'}}
+                            >
+                                <AirbnbRating
+                                size={15}
+                                isDisabled={true}
+                                showRating={false}
+                                count={5}
+                                defaultRating={ReviewList[1].Rating}
+                            />
+                            </View> 
+                        </Card>
+                        
+               
         </View>
+        <TouchableOpacity
+        style={{
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: "center",
+        marginRight: 20
+      }}
+        onPress={() => navigation.navigate('Reviews', {reviewData: ReviewList})} 
+        >
+          <Text
+          style={{fontSize: 15}}
+          >See all Reviews&nbsp;&nbsp;</Text>
+          <Image
+                source={require('../assets/Arrow_right.png')}
+                />     
+          </TouchableOpacity>
       </ScrollView>
   )
   }      
 }
 
 const styles = StyleSheet.create({
-    
     title: {
-        color: 'red',
-        textAlign: 'center'
+      color: 'black',
+      textAlign: 'center',
+      fontSize: 20,
+      // marginRight: 20
     },
+    title2: {
+      color: 'black',
+      textAlign: 'center',
+      fontSize: 20,
+      // justifyContent: "center",
+    
+  },
     example: {
-      textAlign: 'center'
+      backgroundColor: 'white',
+      textAlign: 'center',
+      borderRadius: 20,
+      margin: 10,
+      padding: 10
+
     },
     user: {},
     services: {
-        justifyContent: 'center',
+        justifyContent: 'space-evenly',
         flexDirection: 'row',
         marginBottom: 10
     },
     care: {
-
         flexDirection: 'column',
-        height: 200,
-        width: 100,
-        margin: 10
     },
-    learn: {
-        color: `red`,
-        height: 50,
-        fontSize: 2
+    contactButton: {
+       backgroundColor: '#BEC3AA',
+       alignItems: "center",
+        width: 100,
+        borderRadius: 20,
+    },
+    contactButtonText: {
+      color: 'black',
     },
     centeredView: {
         flex: 1,
@@ -221,6 +298,34 @@ const styles = StyleSheet.create({
       modalText: {
         marginBottom: 15,
         textAlign: "center"
+      },
+      color: {
+        backgroundColor: '#F2F5EE',
+      },
+      serviceButton: {
+        // --forecolor: magenta;
+
+        backgroundColor: 'white',
+        borderRadius: 20,
+        height: 112,
+        width: 112,
+        alignItems: 'center',
+        margin: 5,
+        padding: 5
+      },
+      serviceButtonImage: {
+        height: '80%',
+        width: '70%',
+      },
+      text: {
+        marginTop: 7,
+        marginBottom: 7
+      },
+      secondRow: {
+        flexDirection: 'row',
+        justifyContent: "space-evenly",
+      },
+      rowImage : {
       }
       
 })
