@@ -1,166 +1,493 @@
 import React, {useEffect} from 'react';
-import {View, ScrollView, StyleSheet, Modal} from "react-native";
+import {View, ScrollView, StyleSheet, Modal, Image, TouchableOpacity} from "react-native";
 import { Button, Card, Tab, TabView, Text} from 'react-native-elements';
-import { firestore } from '../components/firebase';
+import { auth, firestore } from '../components/firebase';
 import {getDocs, collection, where, query} from 'firebase/firestore'
-import { SetProfile } from '../components/setProfile';
 
 const Profile = ({navigation}) => {
   const [index, setIndex] = React.useState(0);
-  const [currentDoc, setCurrent] = React.useState([])
-  const [oldDoc, setOld] = React.useState([])
-  const [arg, setArg] = React.useState()
-  const [argNotes, setNotes] = React.useState()
+  const [futureVisits, setFuture] = React.useState([])
+  const [currentVisit, setCurrent] = React.useState([])
+  const [pastVisit, setPast] = React.useState([])
+  // const [limitedPast, setLimit] = React.useState([])
+  const [loaded, confirmLoad] = React.useState(false)
   const [run, setRun] = React.useState(1)
- 
+
   const getData = async (abort) => {
-   if (!currentDoc.length) {
-    const q = query(collection(firestore, "schedule"), where("current", "==", true));
+    
+   if (!futureVisits.length) {
+    const q = query(collection(firestore, "schedule"), where("status", "==", 'future'), where("id", "==", auth.currentUser.uid));
     const querySnapshot = await getDocs(q, {signal: abort.signal})
     querySnapshot.forEach((doc) => {
-        setCurrent((currentDoc) => [...currentDoc, doc.data()
+        setFuture((futureVisits) => [...futureVisits, doc.data()
         ])
     })
   }
 
-  if (!oldDoc.length) {
-    const q = query(collection(firestore, "schedule"), where("current", "==", false));
+  if (!currentVisit.length) {
+    const q = query(collection(firestore, "schedule"), where("status", "==", 'current'), where("id", "==", auth.currentUser.uid));
     const querySnapshot = await getDocs(q, {signal: abort.signal})
     querySnapshot.forEach((doc) => {
-        setOld((oldDoc) => [...oldDoc, doc.data()
+        setCurrent((currentVisit) => [...currentVisit, doc.data()
         ])
     })
   }
- 
-   if (currentDoc[0]) {
-     getArg(currentDoc[0].animals)
+
+  if (!pastVisit.length) {
+    const q = query(collection(firestore, "schedule"), where("status", "==", 'past'), where("id", "==", auth.currentUser.uid));
+    const querySnapshot = await getDocs(q, {signal: abort.signal})
+    querySnapshot.forEach((doc) => {
+        setPast((pastVisit) => [...pastVisit, doc.data()
+        ])
+    })
+  }
+
+   if (futureVisits.length) {
+  confirmLoad(true)
    }
 
    setRun(run + 1)
   }
  
-  const getArg = (animals) => {
-  let thing = Object.entries(animals)
-  setArg(thing)  
-  }
-
   useEffect(() => {
-    const abortController = new AbortController();
+   const abortController = new AbortController();
    getData(abortController)
-
+  
    return () => {
     abortController.abort();
-console.log("prof clean up")
   } ;  
 }, [run === 2])
 
-if (!arg) {
-  return null
+if (loaded === false) {
+  return (
+    <View
+    style={{backgroundColor: '#F2F5EE', height: '100%', width: '100%', marginTop: 300}}
+    >
+    <Text h3
+    style={{textAlign: 'center'}}
+    >You have made no appointments. Check back here after you made one.</Text>
+    </View>
+  )
 }  
 else {
   return (
-    <>
-         <Card>
-           <SetProfile/>
-         <Button 
-          icon={{
-            name: 'edit',
-            type: 'font-awesome',
-            // size: 15,
-            color: 'white',
-          }}
-          iconRight
-          style={styles.button}
-           />
-           <Text>
-             Name:
-           </Text>
-           <Text>
-             Phone number
-           </Text>
-           <Text>
-             Email
-           </Text>
-           <Text>
-           UserName
-           </Text> 
-           <Text>
-           Password
-           </Text>
-          </Card>
+    <>         
        <Tab
           value={index}
           onChange={(e) => setIndex(e)}
           indicatorStyle={{
-            backgroundColor: 'black',
-            height: 3,
+           height: 0,
+          }}
+          containerStyle={{
+            backgroundColor: '#BEC3AA',
           }}
           variant="default"
+          disableIndicator='true'
         >
-          <Tab.Item
-            title="UpComing"
-            titleStyle={{ fontSize: 12 }}
        
+          <Tab.Item
+            title="Upcoming"
+            titleStyle={{ fontSize: 12, color: 'black' }}
+            style={{backgroundColor: '#BEC3AA', 
+            borderRadius: 20,
+            width: '100%',
+            // marginLeft: 24, 
+            height: 45
+          }}      
           />
+
           <Tab.Item
-            title="Pet Update"
-            titleStyle={{ fontSize: 12 }}
-       
+            title="Updates"
+            titleStyle={{ fontSize: 12,  color: 'black' }}
+            style={{backgroundColor: '#BEC3AA',
+            borderRadius: 20, width: '100%', height: 45
+          }}      
+          />
+
+          <Tab.Item
+            title="Past Visits"
+            titleStyle={{ fontSize: 12,  color: 'black' }}
+            style={{backgroundColor: '#BEC3AA',
+            borderRadius: 20, width: '100%', height: 45
+          }}      
           />
         </Tab>
   
         <TabView value={index} onChange={setIndex} animationType="spring">
-          <TabView.Item style={{ width: '100%' }}>
-            {/* Fix issue with date object */}
-           <Card>
-             <Card.Title>{currentDoc[0].appointment}</Card.Title>
-             <Card.Divider/>
-             <Text>{currentDoc[0].location}</Text> 
-          {
-            arg.map((key) => {
+
+        <TabView.Item style={{ height: '100%', width: '100%',
+      backgroundColor: '#F2F5EE'
+      }}>
+           
+           <ScrollView>
+           <Text h4
+        style={{fontWeight: 'bold', textAlign: 'center'}}
+        >Upcoming</Text>
+             {
+               futureVisits.map(
+                 (visit) => {
+                   return (
+                     <View
+                     style={{justifyContent: 'center',
+                     alignItems: 'center'}}
+                     >
+                        <View 
+                     style={{
+                       borderWidth: 1,
+                       borderTopColor: '#F2F5EE',
+                       borderLeftColor: '#F2F5EE',
+                       borderRightColor: '#F2F5EE',
+                      borderBottomColor: 'red',
+                      paddingBottom: 10,
+                      marginBottom: 10,
+                      marginTop: 10,
+                      width: 380,
+                    }}
+                     key={visit}>
+                     {
+             visit.service.length === 1 ?
+             <Text
+             style={{
+              fontWeight: 'bold', 
+              marginTop: 10, marginLeft: 20
+             }}
+             >{visit.service[0]}</Text>
+             :
+             visit.service.length === 2 ?
+             <Text
+             style={{
+               fontWeight: 'bold', 
+               marginTop: 10, marginLeft: 20
+              }}
+             >{visit.service[0] + ' & ' + visit.service[1]}</Text>
+             :
+             visit.service.length === 3 ?
+             <Text
+             style={{
+               fontWeight: 'bold', 
+               marginTop: 10, marginLeft: 20
+              }}
+             >{visit.service[0] + ' & ' + visit.service[1] + ' & ' + visit.service[2]
+             }</Text>
+             :
+             <Text
+             style={{
+               fontWeight: 'bold', 
+               marginTop: 10, marginLeft: 20
+              }}>
+                A service was not selected
+              </Text>
+           }        
+           <Text
+           style={{ marginTop: 10, marginLeft: 20}}
+           >{visit.location}</Text> 
+        
+             <View>
+             <View style={{flexDirection: 'row', marginTop: 10, marginLeft: 20
+          }}
+             > 
+             
+             {
+            Object.entries(visit.animals).map((key) => {
+              console.log(key)
               return (
                 <Text
-                key={Math.random()}
-                >{key[0] + " " + key[1].number}</Text>
+                key={key}
+                >
+                  {key.number}
+                  { key[1].number + ' ' + key[0] + ', ' }
+                </Text>
               )
             })
           }
+             
+             </View>
 
-      <Text style={styles.box}> {currentDoc[0].notes}</Text>
-            <Text>{currentDoc[0].startDate}</Text>
-            <Text>{currentDoc[0].endDate}</Text>
-           </Card>
+          </View>
+   
+          <Text
+            style={{ marginTop: 10, marginLeft: 20}}
+          >{visit.startDate + ' - ' + visit.endDate}</Text> 
+
+                     <Card
+               containerStyle={{margin: 10, borderRadius: 25}}
+             >
+           
+                 {
+              visit.comment ?
+              <Text
+              style={{
+                // marginTop: 10, marginLeft: 20, 
+                backgroundColor: 'white', borderRadius: 20, 
+              }}
+              >{visit.comment}</Text>
+              :
+              <Text
+              style={{backgroundColor: 'white' }}
+              >
+                Add any comments here</Text>
+            }
+             </Card>
+         
+                     </View>
+                     </View>
+                    
+                   )
+                 }
+               )
+             }
+           </ScrollView>
+          </TabView.Item>
+     
+          <TabView.Item style={{ height: '100%', width: '100%',
+          backgroundColor: '#F2F5EE'
+        }}>
+            <ScrollView>
+       
+         <Text h4 style={{fontWeight: 'bold', textAlign: 'center'}} >Current</Text>
+      
+        { 
+     
+               currentVisit.map(
+                 (visit) => {
+                   console.log(visit)
+                   return (
+                     <View
+                     style={{justifyContent: 'center',
+                     alignItems: 'center'}}
+                     >
+                        <View 
+                     style={{
+                       borderWidth: 1,
+                       borderTopColor: '#F2F5EE',
+                       borderLeftColor: '#F2F5EE',
+                       borderRightColor: '#F2F5EE',
+                      borderBottomColor: 'red',
+                      paddingBottom: 10,
+                      marginBottom: 10,
+                      marginTop: 10,
+                      width: 380,
+                    }}
+                     key={visit}>
+                      {
+             visit.service.length === 1 ?
+             <Text
+             style={{
+              fontWeight: 'bold', 
+              marginTop: 10, marginLeft: 20
+             }}
+             >{visit.service[0]}</Text>
+             :
+             visit.service.length === 2 ?
+             <Text
+             style={{
+               fontWeight: 'bold', 
+               marginTop: 10, marginLeft: 20
+              }}
+             >{visit.service[0] + ' & ' + visit.service[1]}</Text>
+             :
+             visit.service.length === 3 ?
+             <Text
+             style={{
+               fontWeight: 'bold', 
+               marginTop: 10, marginLeft: 20
+              }}
+             >{visit.service[0] + ' & ' + visit.service[1] + ' & ' + visit.service[2]
+             }</Text>
+             :
+             <Text
+             style={{
+               fontWeight: 'bold', 
+               marginTop: 10, marginLeft: 20
+              }}>
+                A service was not selected
+              </Text>
+           }        
+           <Text
+           style={{ marginTop: 10, marginLeft: 20}}
+           >{visit.location}</Text> 
+        
+             <View>
+             <View style={{flexDirection: 'row', marginTop: 10, marginLeft: 20
+          }}
+             > 
+             
+             {
+            Object.entries(visit.animals).map((key) => {
+              console.log(key)
+              return (
+                <Text
+                key={key}
+                >
+                  {key.number}
+                  { key[1].number + ' ' + key[0] + ', ' }
+                </Text>
+              )
+            })
+          }
+             
+             </View>
+
+          </View>
+   
+          <Text
+            style={{ marginTop: 10, marginLeft: 20}}
+          >{visit.startDate + ' - ' + visit.endDate}</Text> 
+
+            {
+                visit.update.map((key) => {
+                  return (
+                    <Card containerStyle={{margin: 10, borderRadius: 25}}>
+                       <Text
+                        style={{ backgroundColor: 'white', borderRadius: 20, }}
+                        >
+                       {key}
+                       </Text> 
+                     </Card> )})}
+                      
+                  
+         
+                     </View>
+                     </View>
+                    
+                   )
+                 }
+               )
+     
+       
+             }
+    
+            </ScrollView>
           </TabView.Item>
 
-          <TabView.Item style={{ height: '100%', width: '100%' }}>
+          <TabView.Item style={{ height: '100%', width: '100%',
+          backgroundColor: '#F2F5EE'
+        }}>
             <ScrollView>
-            {
-          oldDoc[0].ownerNotes.map((key) => {
-            return (
-              <Card
-              key={Math.random()}
+         
+        <Text h4
+        style={{fontWeight: 'bold', textAlign: 'center'}}
+        >Past Visit</Text>
+        {
+               pastVisit.map(
+                 (visit) => {
+                   console.log(visit)
+                   return (
+                     <View
+                     style={{justifyContent: 'center',
+                     alignItems: 'center'}}
+                     >
+                        <View 
+                     style={{
+                       borderWidth: 1,
+                       borderTopColor: '#F2F5EE',
+                       borderLeftColor: '#F2F5EE',
+                       borderRightColor: '#F2F5EE',
+                      borderBottomColor: 'red',
+                      paddingBottom: 10,
+                      marginBottom: 10,
+                      marginTop: 10,
+                      width: 380,
+                    }}
+                     key={visit}>
+                      {
+             visit.service.length === 1 ?
+             <Text
+             style={{
+              fontWeight: 'bold', 
+              marginTop: 10, marginLeft: 20
+             }}
+             >{visit.service[0]}</Text>
+             :
+             visit.service.length === 2 ?
+             <Text
+             style={{
+               fontWeight: 'bold', 
+               marginTop: 10, marginLeft: 20
+              }}
+             >{visit.service[0] + ' & ' + visit.service[1]}</Text>
+             :
+             visit.service.length === 3 ?
+             <Text
+             style={{
+               fontWeight: 'bold', 
+               marginTop: 10, marginLeft: 20
+              }}
+             >{visit.service[0] + ' & ' + visit.service[1] + ' & ' + visit.service[2]
+             }</Text>
+             :
+             <Text
+             style={{
+               fontWeight: 'bold', 
+               marginTop: 10, marginLeft: 20
+              }}>
+                A service was not selected
+              </Text>
+           }        
+           <Text
+           style={{ marginTop: 10, marginLeft: 20}}
+           >{visit.location}</Text> 
+        
+             <View>
+             <View style={{flexDirection: 'row', marginTop: 10, marginLeft: 20
+          }}
+             > 
+             
+             {
+            Object.entries(visit.animals).map((key) => {
+              console.log(key)
+              return (
+                <Text
+                key={key}
+                >
+                  {key.number}
+                  { key[1].number + ' ' + key[0] + ', ' }
+                </Text>
+              )
+            })
+          }
+             
+             </View>
+
+          </View>
+   
+          <Text
+            style={{ marginTop: 10, marginLeft: 20}}
+          >{visit.startDate + ' - ' + visit.endDate}</Text> 
+
+                     <Card
+               containerStyle={{margin: 10, borderRadius: 25}}
+             >
+           
+                 {
+              visit.update ?
+              <Text
+              style={{
+                // marginTop: 10, marginLeft: 20, 
+                backgroundColor: 'white', borderRadius: 20, 
+              }}
+              >{visit.update}</Text>
+              :
+              <Text
+              style={{backgroundColor: 'white' }}
               >
-                 <Text
-                 style={styles.box}
-                 >{key}</Text>
-              </Card>
-            )
-          })
-        }
-        <Text>Past Visit</Text>
-        <View style={styles.text}>
-       
-        <Button title="More Review"
-        onPress={() => navigation.navigate('OtherReview', {oldDoc: oldDoc}
-        )}
-        />
-        </View>
+                The sitter has not left any updates left.</Text>
+            }
+             </Card>
+         
+                     </View>
+                     </View>
+                    
+                   )
+                 }
+               )
+             }
             </ScrollView>
           </TabView.Item>
         </TabView>
     </>
     )
-}
+  }
 
 }
 
@@ -172,7 +499,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         fontSize: 45,
         fontWeight: "600",
-        color: '#FFFFFF',
         marginTop: 75,
       },
       services: {
@@ -185,13 +511,12 @@ const styles = StyleSheet.create({
       width: 50,
       left: 320
     },
-    box: {
-      borderWidth: 1,
-      height: 90
-    },
     text: {
       justifyContent: 'center',
       flexDirection: 'row',
+    },
+    setUp: {
+
     }
 
 })
