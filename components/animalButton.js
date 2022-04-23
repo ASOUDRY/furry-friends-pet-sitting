@@ -1,58 +1,85 @@
 import React, {useState, useEffect} from 'react';
 import { Button } from 'react-native-elements';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native';
 
-const AnimalButton = ({remove, animalz, test}) => {
-    
-    const [animalNumber, setanimalNumber] = useState(1)
+const AnimalButton = ({remove, animalz, addtoList, number}) => {
 
+    // let anim = 
+    useEffect(() => {
+       return () => {
+           console.log('unmounted')
+       } 
+    })
+    console.log(number)
+    const [animalNumber, setanimalNumber] = useState(1)  
     return (
         <View style={styles.buttonGrouptrue} >
-                                    <Button title={animalNumber + ' ' + animalz}
-                                    onPress={() => remove(animalz)} 
-                                    containerStyle={styles.button}
-                                    />
-                                            <View style={styles.directionalButtons}>
-                          <Button icon={{
-                              name: 'arrow-up',
-                              type: 'font-awesome',
-                              size: 15,
-                              color: 'white',
+            {/* <Text>{animalNumber}</Text> */}
+            <Button title={animalNumber + ' ' + animalz}
+                onPress={() => remove(animalz)} 
+                buttonStyle={styles.button} titleStyle={{color: 'black'}}
+            />
+            <View style={styles.directionalButtons}>
+                          
+                <TouchableOpacity
+                    onPress={() => {
+                        setanimalNumber(number => number + 1)
+                        // console.log(animalNumber)
+                    addtoList([animalz, animalNumber + 1])      
+                    }}
+                    style={styles.arrowButton} 
+                    >
+                    <Image
+                        style={{  
+                            marginLeft: 'auto',
+                            marginRight: 'auto'
+                        }}
+                        source={require('../assets/arrow_up.png')}
+                    ></Image>
+                </TouchableOpacity>
+                         
+            <TouchableOpacity
+                onPress={() => {
+                                setanimalNumber(number => number - 1)
+                                addtoList([animalz, animalNumber - 1])   
                             }}
-                            iconRight
-                            onPress={() => {
-                                setanimalNumber(animalNumber + 1)
-                               test([animalz, animalNumber + 1])
-                               console.log(animalz)   
-                            }}
-                          />
-                           <Button icon={{
-                              name: 'arrow-down',
-                              type: 'font-awesome',
-                              size: 15,
-                              color: 'white',
-                            }}
-                            iconRight
-                            onPress={() => {
-                                setanimalNumber(animalNumber - 1)
-                                test([animalz, animalNumber - 1])   
-                            }}
-                          />
-                          </View>
-                          </View>
+                            style={styles.arrowButton}
+                        >
+                     <Image
+                        style={{  
+                            marginLeft: 'auto',
+                            marginRight: 'auto'
+                        }}
+                        source={require('../assets/arrow_down.png')}
+                    ></Image>
+            </TouchableOpacity>           
+            </View>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     buttonGrouptrue: {
             flexDirection: 'row',
+            marginLeft: 10,
+            marginBottom: 10,
         },
         button: {
-            backgroundColor: 'black',
-        color: 'black',
-            borderWidth: 2,
+            backgroundColor: 'white',
+            borderRadius: 10,
+            height: 60,
+            padding: 10,
+            margin: 3
+        },
+        arrowButton : {
+            borderRadius: 5,
+            borderWidth: 1,
             borderColor: 'white',
-            borderRadius: 30,
+            backgroundColor: 'white',
+            padding: 5,
+            height: 26,
+            width: 50,
+            margin: 3,
         }
 })
 

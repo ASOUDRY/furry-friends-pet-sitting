@@ -1,57 +1,40 @@
 import React, {useState} from 'react';
-import { Button } from 'react-native-elements';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 
-
-const ServiceButton = (
-    // props
-    {title, returnvisit, returntype}
-    ) => {
-    // console.log(props)
-
-    const changeStyle = () => {
-        if (test === false) {
-            setStyle(styles.clicked)
-        }
-        else {
-            setStyle(styles.button)
-        }
-    }
-
-    const [test, setTest] = useState(false)
-    const [style, setStyle] = useState(styles.button)
+const ServiceButton = ({title, returnvisit}) => {
     return (
         <View>
-            <Button title={title}
-            onPress={() => {
-                if (title === "Walking" || title === "House-Sitting" || title === "Drop-In") {
-                    changeStyle()
-                    returntype(test, title)
-                }
-                else {
-                    returnvisit(title)
-                }
-                setTest(!test)
-            }}
-            buttonStyle={style}
-            />
+<TouchableOpacity
+    onPress={() => {returnvisit(title)}} style={styles.button}
+    >
+        <Text>{title}</Text>
+      </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    button: {
-         borderWidth: 2,
-         borderColor: 'white',
-         borderRadius: 30,
-       
-    },
     clicked: {
          backgroundColor: 'red',
          borderWidth: 2,
          borderColor: 'white',
          borderRadius: 30,
-    }
+    },
+    serviceButtonImage: {
+        height: '80%',
+        width: '70%',
+      },
+      button: {
+        borderWidth: 2,
+        borderColor: 'white',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        height: 45,
+        width: 185,
+        alignItems: "center",
+        margin: 10,
+        padding: 10
+      },
 })
 
 export {ServiceButton}
