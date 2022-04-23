@@ -1,18 +1,38 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform} from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, View, ImageBackground, TouchableOpacity} from 'react-native'
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from '@firebase/auth'
+import { Button } from 'react-native-elements'
 import { auth } from '../components/firebase.js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../App.js'
-
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 const Login = ({navigation}) => {
-  console.log("useContext is" + useContext)
+
+  useEffect(() => {
+    storeKey()
+  return () => {
+  
+  } ;
+},)
+
+onAuthStateChanged(auth, (currentUser) => {
+  setUser(currentUser)
+})
+
+  const [user, setUser] = useState('')
+  const [loginError, setError] = useState('')
+
+  const loginSchema = Yup.object().shape({
+    email: Yup.string("Give characters").email("Invalid Email").required('Email is required'),
+    password: Yup.string().required('Required'),
+  });
+
   const {signIn} = useContext(UserContext)
 
-  const attempt = async () => {
+  const storeKey = async () => {
     if (auth.currentUser) {
-      // console.log("This is the uid " + auth.currentUser.uid)
       await AsyncStorage.setItem('@storage_Key', auth.currentUser.uid)
     }
     else {
@@ -20,88 +40,123 @@ const Login = ({navigation}) => {
     }
   }
 
-  useEffect(() => {
-    let isMounted = true;
-    // console.log("load")
-    if (isMounted) {
-      attempt()
-    }
-    return () => {
-      // console.log("Login clean-up")
-      isMounted = false;
-    } ;
-},)
-
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [firstReview, setfirstReview] = useState('')
-
-  // const navigation = useNavigation()
-  const [registerEmail, setRegisterEmail] = useState('')
-  const [registerPassword, setRegisterPassword] = useState('')
-  const [user, setUser] = useState('')
-  const [toggle, setToggle] = useState(false);
-
-  onAuthStateChanged(auth, (currentUser) => {
-    setUser(currentUser)
-  })
-
-  const login = async () => {
+  const login = async ({email, password}) => {
     try {
-      const user = await signInWithEmailAndPassword(auth, registerEmail, registerPassword)
-      setToggle(!toggle)
-      signIn()
-      // navigation.navigate('screens', {screen: 'Stack', })
-      navigation.navigate('Stack', {screen: 'Home', params: {inReview: firstReview}})
+      const user = await signInWithEmailAndPassword(auth, email, password)
+      .then(
+        () => {
+          signIn()
+          navigation.navigate('Stack', {screen: 'Home'})
+        }
+      )
+      .catch((error) => {
+        const wrongInput = JSON.stringify(error)
+        console.log(wrongInput)
+       const search = wrongInput.search("user")
+      if (search === 14) {
+        setError("The email you entered has not been used to create a account")
+      }
+      else {
+        setError("Your password is incorrect")
+      }
+        // console.log(error)
+      })
     } catch (error) {
-      console.log(error.message)
+      console.log(error)
+      // alert("Your email or password is not correct")
     } 
   }
 
   return (
     <KeyboardAvoidingView
     behavior="height"
-      style={styles.container}
-      // behavior="padding"
     >
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Email"
-          onChangeText={text => setRegisterEmail(text)}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Password"
-          onChangeText={text => setRegisterPassword(text)}
-          style={styles.input}
-          secureTextEntry
-        />
-      </View>
+     
+<ImageBackground
+ source={require(`../assets/landing_photo.jpg`)}
+ style={styles.backImage}
+>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={login}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-
-        {/* <TouchableOpacity
-          onPress={() => {signIn()}}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Test</Text>
-        </TouchableOpacity> */}
-
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Registration')
-          }}
-          style={[styles.button, styles.buttonOutline]}
-        >
-          <Text style={styles.buttonOutlineText}>Don't have a account yet?</Text>
-        </TouchableOpacity>
-      </View>
+  <View
+  style={styles.overlay}
+  >
+    <Text
+    style={{
+      marginLeft: 33,
+      marginBottom: 25,
+      fontWeight: 'bold',
+      alignSelf: 'flex-start',
+      fontSize: 15,
+    }}
+    >Log In</Text>
+  
+      <Formik
+               initialValues={{ email: '', password: '' }}
+               validationSchema={loginSchema}
+               onSubmit={ 
+                      (values, actions) =>  {
+                        actions.resetForm();
+                        login(values);
+                      }
+                  }
+                  // style={styles.form}
+             >
+               {
+              ({values, errors, touched, handleChange, handleSubmit, handleBlur}) => (
+                 <View>
+                   <TextInput
+                     style={styles.input}
+                     onChangeText={handleChange('email')}
+                     placeholder='Email'
+                     onBlur={handleBlur('email')}
+                     value={values.email}
+                   />
+                   {errors.email && touched.email ? (
+                          <Text style={{ fontSize: 10, color: 'red' }}>{errors.email}</Text>       
+                       ) : null }
+                    <TextInput
+                   style={styles.input}
+                   placeholder='Password'
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  value={values.password}
+                  secureTextEntry
+                                />
+                      {errors.password && touched.password ? (
+                          <Text style={{ fontSize: 10, color: 'red' }}>{errors.password}</Text>           
+                       ) : null }
+                     {loginError ? (
+                          <Text style={{ fontSize: 10, color: 'red' }}>{loginError}</Text>
+                       ) : null }
+                   <Button onPress={handleSubmit} title="Log In" buttonStyle={styles.button} /> 
+                   <Text style={{marginBottom: 5}} >
+                    {<TouchableOpacity><Text>Forgot Password</Text></TouchableOpacity>}
+                   </Text>
+                   <View
+                   style={styles.line}
+                   >
+                   <Text>
+                   New Here?&nbsp;
+                   </Text>
+                     <TouchableOpacity
+                     onPress={ () => navigation.navigate('Registration')} 
+                     >
+                       <Text
+                        style={
+                          styles.link
+                        }
+                       >
+                        Sign Up
+                       </Text>
+                     </TouchableOpacity>
+                     </View>
+                 </View>
+               )}
+       </Formik>
+  </View>
+  
+</ImageBackground>
+   
     </KeyboardAvoidingView>
   )
 }
@@ -109,48 +164,46 @@ const Login = ({navigation}) => {
 export default Login
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   inputContainer: {
-    width: '80%'
+    width: '100%'
+  },
+  form: {
+    width: 500
   },
   input: {
     backgroundColor: 'white',
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderRadius: 10,
     marginTop: 5,
+    marginBottom: 25,
+    width: 352,
+   height: 49
   },
-  buttonContainer: {
-    width: '60%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 40,
+  backImage:{
+    height: '100%',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#BEC3AACC',
+      alignItems: 'center',
+      justifyContent: 'center',
   },
   button: {
-    backgroundColor: '#0782F9',
-    width: '100%',
-    padding: 15,
+    backgroundColor: '#6F7643',
     borderRadius: 10,
-    alignItems: 'center',
+    marginBottom: 25,
   },
-  buttonOutline: {
-    backgroundColor: 'white',
-    marginTop: 5,
-    borderColor: '#0782F9',
-    borderWidth: 2,
+  forgetButton: {
+    backgroundColor: '#00000000'
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: '700',
-    fontSize: 16,
+  link: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+    marginTop: 1
   },
-  buttonOutlineText: {
-    color: '#0782F9',
-    fontWeight: '700',
-    fontSize: 16,
-  },
+  line: {
+   flexDirection: 'row'
+  }
 })
